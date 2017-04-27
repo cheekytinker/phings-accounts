@@ -1,24 +1,23 @@
 'use strict';
 
 require('babel-core/register');
-var gulp = require('gulp');
-var watch = require('gulp-watch');
-var sourcemaps = require('gulp-sourcemaps');
-var babel = require('gulp-babel');
-var concat = require('gulp-concat');
-var plumber = require('gulp-plumber');
-var mocha = require('gulp-mocha');
-var clean = require('gulp-clean');
-var istanbul = require('gulp-istanbul');
-var runSequence = require('run-sequence');
+const gulp = require('gulp');
+const watch = require('gulp-watch');
+const sourcemaps = require('gulp-sourcemaps');
+const babel = require('gulp-babel');
+const concat = require('gulp-concat');
+const plumber = require('gulp-plumber');
+const mocha = require('gulp-mocha');
+const clean = require('gulp-clean');
+const istanbul = require('gulp-istanbul');
 
-var testFiles = 'test/**/*.js';
-var srcFiles = 'src/**/*.js';
+const testFiles = 'test/**/*.js';
+const srcFiles = 'src/**/*.js';
 
 gulp.task('transpileSource', () => {
   gulp.src(srcFiles)
     .pipe(plumber(function (error) {
-      console.log('Error transpiling', error.message)
+      console.log('Error transpiling', error.message);
       this.emit('end');
     }))
     .pipe(sourcemaps.init())
@@ -26,13 +25,13 @@ gulp.task('transpileSource', () => {
       presets: ['es2015'],
     }))
     .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest('./build/lib/'));
+    .pipe(gulp.dest('./build/src/'));
 });
 
 gulp.task('runtests', ['transpileSource'], () => {
   return gulp.src([testFiles])
     .pipe(babel({presets: ['es2015']}))
-    .pipe(gulp.dest('./build/tests/'))
+    .pipe(gulp.dest('./build/test/'))
     .pipe(mocha());
 });
 

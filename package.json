@@ -2,7 +2,7 @@
   "name": "phings-accounts",
   "version": "1.0.0",
   "description": "Accounts service",
-  "main": "index.js",
+  "main": "build/lib/app.js",
   "scripts": {
     "build": "gulp transpileSource",
     "test": "gulp runtests",
