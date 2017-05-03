@@ -1,6 +1,8 @@
+import log from './utilities/logging';
 
-export function start() {
-  console.log('code under test');
+export default function start() {
+  log.info('code under test');
   let x = 0;
-  x=x+1;
+  x += 1;
+  log.info(x);
 }

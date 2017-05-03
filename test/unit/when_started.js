@@ -1,5 +1,5 @@
 import { describe, it } from 'mocha';
-import { start } from '../../src/app';
+import start from '../../src/app';
 
 describe('unit', () => {
   describe('account', () => {
