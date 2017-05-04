@@ -6,7 +6,8 @@
   "scripts": {
     "build": "gulp transpileSource",
     "test": "gulp runtests",
-    "cover": "istanbul cover node_modules/mocha/bin/_mocha -- --reporter mocha-junit-reporter --compilers js:babel-core/register --recursive test/**/*.js"
+    "cover": "istanbul cover node_modules/mocha/bin/_mocha -- --reporter mocha-junit-reporter --compilers js:babel-core/register --recursive test/**/*.js",
+    "lint": "eslint \"src\\**\" --debug"
   },
   "author": "A Hollingsworth",
   "license": "ISC",
@@ -18,6 +19,11 @@
     "babel-polyfill": "^6.23.0",
     "babel-preset-es2015": "^6.24.1",
     "chai": "^3.5.0",
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb": "^14.1.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^4.0.0",
+    "eslint-plugin-react": "^6.9.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-clean": "^0.3.2",

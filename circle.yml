@@ -16,6 +16,7 @@ dependencies:
 
 test:
   override:
+    - npm run lint
     - npm run cover
 
   post:
