@@ -1,4 +1,5 @@
-import log from './utilities/logging';
+import { log } from './utilities/logging';
+import './utilities/initialiseExternalServices';
 
 export default function start() {
   log.info('code under test');
