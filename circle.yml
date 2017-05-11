@@ -12,13 +12,12 @@ machine:
 dependencies:
   override:
     - npm install
-    - npm run build
-
+    - npm run lint
+    - npm run transpile
 test:
   override:
-    - npm run lint
     - npm run cover
-    - npm test
+    - npm run checkcover
 
   post:
     - mkdir -p $CIRCLE_ARTIFACTS/coverage-report
@@ -32,7 +31,7 @@ deployment:
     branch: /.*-feature$/
     commands:
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-      - docker push cheekytinker/phings-accounts:latest
+      - docker push cheekytinker/phings-accounts:$CIRCLE_BRANCH
   production:
     branch: master
     commands:
