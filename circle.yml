@@ -24,16 +24,19 @@ test:
     - mv coverage $CIRCLE_ARTIFACTS/coverage-report
     - mkdir -p $CIRCLE_TEST_REPORTS/junit
     - mv test-results.xml $CIRCLE_TEST_REPORTS/junit
-    - docker info
-    - docker build -t cheekytinker/phings-accounts:latest .
+
 deployment:
   development:
     branch: /.*-feature$/
     commands:
+      - docker info
+      - docker build -t cheekytinker/phings-accounts:$CIRCLE_BRANCH .
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
       - docker push cheekytinker/phings-accounts:$CIRCLE_BRANCH
   production:
     branch: master
     commands:
+      - docker info
+      - docker build -t cheekytinker/phings-accounts:latest .
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
       - docker push cheekytinker/phings-accounts:latest
