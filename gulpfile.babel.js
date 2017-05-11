@@ -10,6 +10,7 @@ const plumber = require('gulp-plumber');
 const mocha = require('gulp-mocha');
 const clean = require('gulp-clean');
 const istanbul = require('gulp-istanbul');
+const isparta = require('isparta');
 
 const testFiles = 'test/**/*.js';
 const srcFiles = 'src/**/*.js';
@@ -34,4 +35,5 @@ gulp.task('runtests', ['transpileSource'], () => {
     .pipe(gulp.dest('./build/test/'))
     .pipe(mocha());
 });
+
 

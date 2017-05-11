@@ -11,5 +11,5 @@ COPY . /usr/src/app
 
 RUN npm install
 
-EXPOSE 10010
+EXPOSE 10011
 CMD npm start
