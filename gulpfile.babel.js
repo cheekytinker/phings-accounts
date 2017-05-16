@@ -15,7 +15,12 @@ const isparta = require('isparta');
 const testFiles = 'test/**/*.js';
 const srcFiles = 'src/**/*.js';
 
-gulp.task('transpileSource', () => {
+gulp.task('copyyaml', () => {
+  gulp.src('src/config/**/*.yaml')
+    .pipe(gulp.dest('build/src/config/'));
+});
+
+gulp.task('transpileSource', ['copyyaml'], () => {
   gulp.src(srcFiles)
     .pipe(plumber(function (error) {
       console.log('Error transpiling', error.message);
