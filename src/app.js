@@ -3,7 +3,6 @@ import SwaggerRestify from 'swagger-restify-mw';
 import { log } from './utilities/logging';
 import './utilities/initialiseExternalServices';
 import appConfig from './config/application';
-import createAccount from './api/controllers/accountController';
 
 export default function start() {
 }
@@ -21,13 +20,13 @@ const config = {
 console.log(config);
 SwaggerRestify.create(config, (err, swaggerRestify) => {
   log.info('Restify started');
+  /* istanbul ignore next */
   if (err) {
     log.error(err);
     throw err;
   }
 
   swaggerRestify.register(server);
-  //server.post('/accounts', createAccount);
 
   const port = process.env.PORT || 10010;
   server.listen(port, () => {

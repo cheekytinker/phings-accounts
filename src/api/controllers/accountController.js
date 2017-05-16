@@ -8,6 +8,12 @@ function createAccount(req, res, next) {
   next();
 }
 
+function another(req, res, next) {
+  log.info('another');
+  res.json({ message: `Account "${req} ${res}"` });
+  next();
+}
 export {
   createAccount,
+  another,
 };
