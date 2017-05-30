@@ -1,3 +1,4 @@
+import servicebus from 'servicebus';
 import mongoose from 'mongoose';
 import config from '../config/application';
 
@@ -8,3 +9,10 @@ const dbConnectionUrl = `mongodb://${host}:27017/${mongoRepository}`;
 mongoose.Promise = global.Promise;
 mongoose.connect(dbConnectionUrl);
 
+const bus = servicebus.bus({
+  url: config.app.amqpHost,
+});
+
+module.exports = {
+  bus,
+};

@@ -1,14 +1,23 @@
 import Logger from 'bunyan';
+import consoleStream from 'bunyan-console-stream';
 import fs from 'fs';
 import path from 'path';
 import appConfig from '../config/application';
 
+
 const defaultLogDir = appConfig.app.logDir;
+const consoleStreamOptions = {
+  stderrThreshold: 40,
+};
 
 function createLogger(logFilePath) {
   return new Logger({
     name: `${appConfig.app.name}`,
     streams: [
+      {
+        type: 'raw',
+        stream: consoleStream.createStream(consoleStreamOptions),
+      },
       {
         level: appConfig.app.logLevel,
         path: logFilePath,

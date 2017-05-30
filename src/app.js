@@ -1,8 +1,11 @@
 import restify from 'restify';
 import SwaggerRestify from 'swagger-restify-mw';
+import msgBus from './mbusDomain';
 import { log } from './utilities/logging';
 import './utilities/initialiseExternalServices';
 import appConfig from './config/application';
+import { domain } from './cqrsDomain';
+
 
 export default function start() {
 }
@@ -17,20 +20,42 @@ const config = {
   appRoot: __dirname,
   swaggerFile: `${__dirname}/config/swagger/swagger.yaml`,
 };
-console.log(config);
-SwaggerRestify.create(config, (err, swaggerRestify) => {
-  log.info('Restify started');
-  /* istanbul ignore next */
-  if (err) {
-    log.error(err);
-    throw err;
+log.info(config);
+
+domain.init((err, warnings) => {
+  if (warnings) {
+    log.info(`Warnings ${warnings}`);
+    throw new Error('Cqrs Domain failed to start');
   }
+  if (err) {
+    log.info(`Error ${err}`);
+    return;
+  }
+  msgBus.onCommand((cmd) => {
+    log.info(`received command ${cmd}`);
+    domain.handle(cmd);
+  });
+  domain.onEvent((event) => {
+    log.info(`received event ${event}`);
+    msgBus.emitEvent(event);
+  });
+  const info = domain.getInfo();
+  log.info(info);
 
-  swaggerRestify.register(server);
+  SwaggerRestify.create(config, (swaggerErr, swaggerRestify) => {
+    log.info('Restify started');
+    /* istanbul ignore next */
+    if (swaggerErr) {
+      log.error(swaggerErr);
+      throw swaggerErr;
+    }
 
-  const port = process.env.PORT || 10010;
-  server.listen(port, () => {
-    log.info(`Listening on port ${port}`);
+    swaggerRestify.register(server);
+
+    const port = process.env.PORT || 10010;
+    server.listen(port, () => {
+      log.info(`Listening on port ${port}`);
+    });
   });
 });
 

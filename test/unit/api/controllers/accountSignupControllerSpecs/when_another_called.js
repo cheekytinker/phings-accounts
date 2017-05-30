@@ -2,7 +2,7 @@ import { describe, it } from 'mocha';
 import chai from 'chai';
 import dirtyChai from 'dirty-chai';
 import sinon from 'sinon';
-import { another } from '../../../../../src/api/controllers/accountController';
+import { another } from '../../../../../src/api/controllers/accountSignupController';
 
 const expect = chai.expect;
 chai.use(dirtyChai);
@@ -10,7 +10,7 @@ chai.use(dirtyChai);
 describe('unit', () => {
   describe('api', () => {
     describe('controllers', () => {
-      describe('accountControllerSpecs', () => {
+      describe('accountSignupControllerSpecs', () => {
         describe('when another called', () => {
           const req = {};
           const res = {

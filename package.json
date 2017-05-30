@@ -30,17 +30,21 @@
     "lint": "eslint \"src\\**\" --debug",
     "build": "npm run lint && npm run transpile && npm run cover && npm run checkcover",
     "start": "cross-env DEBUG=swagger-tools:middleware:* node build/src/app.js",
-    "edit": "cross-env swagger_swagger_fileName=src/config/swagger.yaml swagger project edit"
+    "edit": "cross-env swagger_swagger_fileName=src/config/swagger/swagger.yaml swagger project edit"
   },
   "author": "A Hollingsworth",
   "license": "ISC",
   "dependencies": {
     "bunyan": "^1.8.10",
+    "bunyan-console-stream": "^0.1.0",
+    "cqrs-domain": "^2.5.8",
     "debug": "^2.6.6",
     "mongoose": "^4.9.7",
     "restify": "^4.3.0",
+    "servicebus": "^2.0.10",
     "swagger-restify-mw": "^0.7.0",
-    "swagger-tools": "^0.10.1"
+    "swagger-tools": "^0.10.1",
+    "uuid": "^3.0.1"
   },
   "devDependencies": {
     "babel-core": "^6.24.1",

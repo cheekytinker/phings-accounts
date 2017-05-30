@@ -6,6 +6,8 @@ const config = {
     logLevel: process.env.APPLICATION_LOG_LEVEL || 'info',
     dbHost: process.env.DB_HOST || 'localhost',
     mongoRepository: process.env.PHINGS_ACCOUNTS_REPOSITORY || 'phings-accounts',
+    amqpHost: process.env.PHINGS_AMQP_HOST || 'amqp://localhost:5672',
+    defaultQueue: 'phings-accounts',
   },
 };
 
