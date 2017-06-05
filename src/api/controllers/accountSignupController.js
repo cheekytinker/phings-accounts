@@ -19,21 +19,36 @@ function createAccountSignup(req, res, next) {
     meta: {
       userId: 'ccd65819-4da4-4df9-9f24-5b10bf89ef89',
     },
-  }, (err, events, aggregateData) => {
+  }, (err, events, aggregateData, metaInfos) => {
+    if (err) {
+      log.info(`Error: ${err.name} : ${err.message} : ${err.more}`);
+      res.status(400);
+      res.json({
+        message: `Error "${err.message}"`,
+      });
+      next();
+      return;
+    }
     log.info(aggregateData);
     res.status(201);
     log.info(req);
-    res.json({ message: `Account signup "${req.body.name}" created` });
+    const { id, name, status } = aggregateData;
+    res.json({
+      message: `Account signup "${req.body.name}" created`,
+      entity: { id, name, status },
+      id: metaInfos.aggregateId,
+    });
     next();
   });
 }
 
-function another(req, res, next) {
-  log.info('another');
-  res.json({ message: `Account "${req} ${res}"` });
+function readAccountSignup(req, res, next) {
+  log.info('readAccountSignup');
+  res.status(200);
+  res.json({ key: `${req.swagger.params.key.value}` });
   next();
 }
 export {
   createAccountSignup,
-  another,
+  readAccountSignup,
 };

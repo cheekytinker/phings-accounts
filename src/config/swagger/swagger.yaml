@@ -20,6 +20,7 @@ produces:
 paths:
   /accountSignups:
     x-swagger-router-controller: accountSignupController
+    
     post:
       description: create an account for use in the api
       operationId: createAccountSignup
@@ -35,6 +36,26 @@ paths:
           description: success
           schema:
             $ref: "#/definitions/CreateAccountSignupResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /accountSignups/{key}:
+    x-swagger-router-controller: accountSignupController
+    get:
+      description: get accountSignup
+      operationId: readAccountSignup
+      parameters:
+        - name: key
+          in: path
+          type: string
+          description: key of the signup
+          required: true
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: "#/definitions/ReadAccountSignupResponse"
         default:
           description: Error
           schema:
@@ -95,6 +116,10 @@ definitions:
       - firstName
       - lastName
   CreateAccountSignupResponse:
+    properties:
+      key:
+        type: string
+  ReadAccountSignupResponse:
     properties:
       key:
         type: string
