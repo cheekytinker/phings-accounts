@@ -40,6 +40,10 @@ export default {
     log.info(event);
     bus.publish('event', JSON.stringify(event));
   },
+  emitNotification: (not) => {
+    log.info(not);
+    bus.publish('notification', JSON.stringify(not));
+  },
   onEvent: (callback) => {
     if (evtSubscriptions.length === 0) {
       bus.subscribe('event', eventHandler);

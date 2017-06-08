@@ -38,13 +38,15 @@
     "bunyan": "^1.8.10",
     "bunyan-console-stream": "^0.1.0",
     "cqrs-domain": "^2.5.8",
+    "cqrs-eventdenormalizer": "^1.10.1",
     "debug": "^2.6.6",
     "mongoose": "^4.9.7",
     "restify": "^4.3.0",
     "servicebus": "^2.0.10",
     "swagger-restify-mw": "^0.7.0",
     "swagger-tools": "^0.10.1",
-    "uuid": "^3.0.1"
+    "uuid": "^3.0.1",
+    "viewmodel": "https://registry.npmjs.org/viewmodel/-/viewmodel-1.5.22.tgz"
   },
   "devDependencies": {
     "babel-core": "^6.24.1",

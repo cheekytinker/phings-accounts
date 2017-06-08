@@ -1,6 +1,7 @@
 import uuidv4 from 'uuid';
 import { log } from './../../utilities/logging';
 import { domain } from '../../cqrsDomain';
+import { readDomain } from '../../cqrsReadDomain';
 
 function createAccountSignup(req, res, next) {
   log.info('create account signup');
@@ -42,11 +43,34 @@ function createAccountSignup(req, res, next) {
   });
 }
 
+const accountSignupRepo = readDomain.repository.extend({
+  collectionName: 'accountSignup',
+});
+
 function readAccountSignup(req, res, next) {
   log.info('readAccountSignup');
-  res.status(200);
-  res.json({ key: `${req.swagger.params.key.value}` });
-  next();
+
+  accountSignupRepo.findOne({ id: req.swagger.params.key.value }, (err, accountSignup) => {
+    log.info('got readAccountSignup');
+    if (err) {
+      log.error(err);
+      res.status(500);
+      res.json({ error: 'An error occurred' });
+      next();
+      return;
+    }
+    if (accountSignup === null) {
+      log.info(`Account signup not found ${req.swagger.params.key.value}`);
+      res.status(404);
+      res.json({ message: 'Account Signup Not found' });
+      next();
+      return;
+    }
+    log.info('success readAccountSignup');
+    res.status(200);
+    res.json(accountSignup);
+    next();
+  });
 }
 export {
   createAccountSignup,
