@@ -2,6 +2,7 @@ import denormalizer from 'cqrs-eventdenormalizer';
 import config from './config/denormalizer';
 import { log } from './utilities/logging';
 
+log.info('cqrsReadDomain initialising');
 const myDenormalizer = denormalizer(config);
 
 myDenormalizer.repository.on('connect', () => {

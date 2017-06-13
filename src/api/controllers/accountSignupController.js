@@ -68,7 +68,8 @@ function readAccountSignup(req, res, next) {
     }
     log.info('success readAccountSignup');
     res.status(200);
-    res.json(accountSignup);
+    const { id: key, name, status } = accountSignup.attributes;
+    res.json({ key, name, status });
     next();
   });
 }

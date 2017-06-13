@@ -42,3 +42,8 @@ gulp.task('runtests', ['transpileSource'], () => {
 });
 
 
+gulp.task('watch', ['transpileSource'], () => {
+  return watch(srcFiles);
+});
+
+

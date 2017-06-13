@@ -8,7 +8,7 @@ import appConfig from './config/application';
 import config from './config/denormalizer';
 import { domain } from './cqrsDomain';
 import { readDomain } from './cqrsReadDomain';
-
+import { graphQlServerStart } from './graphQl/server';
 
 export default function start() {
 }
@@ -27,20 +27,20 @@ log.info(config);
 
 readDomain.onEvent((evnt) => {
   log.info(`read domain received event ${evnt.name}`);
-  //let the client know the view has changed - sockets
-  //msgBus.emitEvent(evnt);
+  //  let the client know the view has changed - sockets
+  //  msgBus.emitEvent(evnt);
 });
 
 readDomain.onNotification((not) => {
   log.info(`read domain emitted notification ${not}`);
-  //msgBus.emitNotification(not);
+  //  msgBus.emitNotification(not);
 });
 
 readDomain.onEventMissing((evnt) => {
   log.info(`read domain missing event ${evnt}`);
 });
-
-viewmodel.read(config.repository, (err, repository) => {
+//  err, repository - how to use this repository
+viewmodel.read(config.repository, (err) => {
   readDomain.init((err2, warnings2) => {
     if (warnings2) {
       log.info(`Warnings ${warnings2}`);
@@ -88,6 +88,7 @@ viewmodel.read(config.repository, (err, repository) => {
           log.info(`Listening on port ${port}`);
         });
       });
+      graphQlServerStart();
     });
   });
 });
