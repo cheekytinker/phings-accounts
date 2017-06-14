@@ -6,5 +6,6 @@ module.exports = [
     defaultCommandPayload: 'payload',
     defaultEventPayload: 'payload',
     defaultPreConditionPayload: 'payload',
-  }),
+  })
+  .defineSnapshotNeed((loadingTime, events) => events.length >= 10),
 ];

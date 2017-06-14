@@ -59,6 +59,8 @@ viewmodel.read(config.repository, (err) => {
         log.info(`Cqrs Domain Error ${err}`);
         return;
       }
+      const domainInfo = domain.getInfo();
+      log.info(`Domain Info ${domainInfo}`);
       msgBus.onEvent((evt) => {
         log.info(`bus raised event ${evt.name}`);
         readDomain.handle(evt);
@@ -83,9 +85,22 @@ viewmodel.read(config.repository, (err) => {
 
         swaggerRestify.register(server);
 
+        server.use((errX, req, res, next) => {
+          console.error(errX.stack)
+          res.status(500).send('Something broke!');
+        });
         const port = process.env.PORT || 10010;
         server.listen(port, () => {
           log.info(`Listening on port ${port}`);
+        });
+        server.on('InternalServer', (req, res, intErr, cb) => {
+          return cb();
+        });
+        server.on('uncaughtException', (serverErr) => {
+          log.info(`Uncaught server exception ${serverErr}`);
+        });
+        process.on('uncaughtException', (procErr) => {
+          log.info(`Uncaught process exception ${procErr}`);
         });
       });
       graphQlServerStart();

@@ -4,9 +4,11 @@ import { log } from '../utilities/logging';
 import '../utilities/initialiseExternalServices';
 import { schema } from '../api/graphQlSchemas/accountSignup';
 import { readAccountSignup } from '../api/queries/readAccountSignup';
+import { createAccountSignup } from '../api/mutations/createAccountSignup';
 
 const root = {
   accountSignup: readAccountSignup,
+  createAccountSignup,
 };
 
 function start() {
