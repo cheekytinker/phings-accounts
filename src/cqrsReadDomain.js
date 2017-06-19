@@ -2,25 +2,34 @@ import denormalizer from 'cqrs-eventdenormalizer';
 import config from './config/denormalizer';
 import { log } from './utilities/logging';
 
+let singleDenormalizer = null;
 log.info('cqrsReadDomain initialising');
-const myDenormalizer = denormalizer(config);
+const myDenormalizer = () => {
+  log.info('cqrsReadDomain requesting');
+  if (singleDenormalizer) {
+    log.info('cqrsReadDomain already exists');
+    return singleDenormalizer;
+  }
+  log.info('cqrsReadDomain creating');
+  singleDenormalizer = denormalizer(config);
+  singleDenormalizer.repository.on('connect', () => {
+    log.info('Repository connected');
+  });
 
-myDenormalizer.repository.on('connect', () => {
-  log.info('Repository connected');
-});
+  singleDenormalizer.repository.on('disconnect', () => {
+    log.info('Repository disconnected');
+  });
 
-myDenormalizer.repository.on('disconnect', () => {
-  log.info('Repository disconnected');
-});
+  singleDenormalizer.revisionGuardStore.on('connect', () => {
+    log.info('revisionGuardStore connected');
+  });
 
-myDenormalizer.revisionGuardStore.on('connect', () => {
-  log.info('revisionGuardStore connected');
-});
+  singleDenormalizer.revisionGuardStore.on('disconnect', () => {
+    log.info('revisionGuardStore disconnected');
+  });
+  return singleDenormalizer;
+};
 
-myDenormalizer.revisionGuardStore.on('disconnect', () => {
-  log.info('revisionGuardStore disconnected');
-});
-
-module.exports = {
+export default {
   readDomain: myDenormalizer,
 };

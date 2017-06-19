@@ -1,8 +1,8 @@
 import { log } from './../../utilities/logging';
-import { readDomain } from '../../cqrsReadDomain';
+import cqrsReadDomain from '../../cqrsReadDomain';
 
-function readAccountSignup({ key: keyToFind }) {
-  const accountSignupRepo = readDomain.repository.extend({
+export default function readAccountSignup({ key: keyToFind }) {
+  const accountSignupRepo = cqrsReadDomain.readDomain().repository.extend({
     collectionName: 'accountSignup',
   });
   log.info('readAccountSignup');
@@ -32,8 +32,4 @@ function readAccountSignup({ key: keyToFind }) {
     });
   });
 }
-
-export {
-  readAccountSignup,
-};
 

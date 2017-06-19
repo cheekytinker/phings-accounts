@@ -7,7 +7,7 @@ import './utilities/initialiseExternalServices';
 import appConfig from './config/application';
 import config from './config/denormalizer';
 import { domain } from './cqrsDomain';
-import { readDomain } from './cqrsReadDomain';
+import cqrsReadDomain from './cqrsReadDomain';
 import { graphQlServerStart } from './graphQl/server';
 
 export default function start() {
@@ -25,23 +25,25 @@ const swaggerConfig = {
 };
 log.info(config);
 
-readDomain.onEvent((evnt) => {
-  log.info(`read domain received event ${evnt.name}`);
-  //  let the client know the view has changed - sockets
-  //  msgBus.emitEvent(evnt);
-});
 
-readDomain.onNotification((not) => {
-  log.info(`read domain emitted notification ${not}`);
-  //  msgBus.emitNotification(not);
-});
-
-readDomain.onEventMissing((evnt) => {
-  log.info(`read domain missing event ${evnt}`);
-});
 //  err, repository - how to use this repository
 viewmodel.read(config.repository, (err) => {
-  readDomain.init((err2, warnings2) => {
+  const readDomainInst = cqrsReadDomain.readDomain();
+  readDomainInst.onEvent((evnt) => {
+    log.info(`read domain received event ${evnt.name}`);
+    //  let the client know the view has changed - sockets
+    //  msgBus.emitEvent(evnt);
+  });
+
+  readDomainInst.onNotification((not) => {
+    log.info(`read domain emitted notification ${not}`);
+    //  msgBus.emitNotification(not);
+  });
+
+  readDomainInst.onEventMissing((evnt) => {
+    log.info(`read domain missing event ${evnt}`);
+  });
+  readDomainInst.init((err2, warnings2) => {
     if (warnings2) {
       log.info(`Warnings ${warnings2}`);
       throw new Error('Cqrs Read Domain failed to start');
@@ -63,7 +65,7 @@ viewmodel.read(config.repository, (err) => {
       log.info(`Domain Info ${domainInfo}`);
       msgBus.onEvent((evt) => {
         log.info(`bus raised event ${evt.name}`);
-        readDomain.handle(evt);
+        readDomainInst.handle(evt);
       });
       msgBus.onCommand((cmd) => {
         log.info(`received command ${cmd.name}`);
@@ -86,16 +88,15 @@ viewmodel.read(config.repository, (err) => {
         swaggerRestify.register(server);
 
         server.use((errX, req, res, next) => {
-          console.error(errX.stack)
+          console.error(errX.stack);
           res.status(500).send('Something broke!');
+          next();
         });
         const port = process.env.PORT || 10010;
         server.listen(port, () => {
           log.info(`Listening on port ${port}`);
         });
-        server.on('InternalServer', (req, res, intErr, cb) => {
-          return cb();
-        });
+        server.on('InternalServer', (req, res, intErr, cb) => cb());
         server.on('uncaughtException', (serverErr) => {
           log.info(`Uncaught server exception ${serverErr}`);
         });

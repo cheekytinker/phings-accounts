@@ -1,4 +1,5 @@
-{ "title": "startAccountSignup",
+{
+  "title": "startAccountSignup",
   "type": "object",
   "properties": {
     "id": {

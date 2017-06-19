@@ -2,7 +2,7 @@ import uuidv4 from 'uuid';
 import { log } from './../../utilities/logging';
 import { domain } from '../../cqrsDomain';
 
-function createAccountSignup({ input: { name: accountName } }) {
+export default function createAccountSignup({ input: { name: accountName } }) {
   log.info('createAccountSignup');
   return new Promise((resolve, reject) => {
     domain.handle({
@@ -33,6 +33,3 @@ function createAccountSignup({ input: { name: accountName } }) {
   });
 }
 
-export {
-  createAccountSignup,
-};

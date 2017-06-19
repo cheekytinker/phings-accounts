@@ -6,7 +6,6 @@ module.exports = denormalizer.defineCollection({
 
   // optional, default ''
   defaultPayload: 'payload',
-
   // indexes: [ // for mongodb
   //   'profileId',
   //   // or:

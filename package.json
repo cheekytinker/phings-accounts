@@ -23,12 +23,14 @@
     "instrument": false
   },
   "scripts": {
+    "watchSource": "gulp watchSource",
     "transpile": "gulp transpileSource",
     "test": "gulp runtests",
     "checkcover": "nyc check-coverage --functions 100 --lines 100 --statements 100 --branches 90 ",
     "cover": "cross-env NODE_ENV=test nyc --reporter=lcov --reporter=text-lcov  mocha --reporter mocha-junit-reporter test --recursive",
-    "lint": "eslint \"src\\**\" --debug",
-    "build": "npm run lint && npm run transpile && npm run cover && npm run checkcover",
+    "lint": "eslint \"src\\**\\*.js\" --debug",
+    "clean": "gulp cleanbuildfiles",
+    "build": "npm run clean && npm run lint && npm run transpile && npm run cover && npm run checkcover",
     "start": "cross-env DEBUG=swagger-tools:middleware:* node build/src/app.js",
     "edit": "cross-env swagger_swagger_fileName=src/config/swagger/swagger.yaml swagger project edit"
   },
@@ -67,7 +69,7 @@
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-babel-istanbul": "^1.6.0",
-    "gulp-clean": "^0.3.2",
+    "gulp-clean": "https://registry.npmjs.org/gulp-clean/-/gulp-clean-0.3.2.tgz",
     "gulp-concat": "^2.6.1",
     "gulp-inject-modules": "^1.0.0",
     "gulp-istanbul": "^1.1.1",
@@ -81,7 +83,7 @@
     "mocha-junit-reporter": "^1.13.0",
     "nyc": "^10.3.2",
     "rimraf": "^2.6.1",
-    "run-sequence": "^1.2.2",
+    "run-sequence": "https://registry.npmjs.org/run-sequence/-/run-sequence-1.2.2.tgz",
     "shortid": "^2.2.8",
     "sinon": "^2.1.0",
     "source-map-support": "^0.4.15"

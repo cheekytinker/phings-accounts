@@ -1,7 +1,7 @@
 import uuidv4 from 'uuid';
 import { log } from './../../utilities/logging';
 import { domain } from '../../cqrsDomain';
-import { readDomain } from '../../cqrsReadDomain';
+import cqrsReadDomain from '../../cqrsReadDomain';
 
 function createAccountSignup(req, res, next) {
   log.info('create account signup');
@@ -43,12 +43,12 @@ function createAccountSignup(req, res, next) {
   });
 }
 
-const accountSignupRepo = readDomain.repository.extend({
-  collectionName: 'accountSignup',
-});
-
 function readAccountSignup(req, res, next) {
   log.info('readAccountSignup');
+  const rd = cqrsReadDomain.readDomain();
+  const accountSignupRepo = rd.repository.extend({
+    collectionName: 'accountSignup',
+  });
 
   accountSignupRepo.findOne({ id: req.swagger.params.key.value }, (err, accountSignup) => {
     log.info('got readAccountSignup');

@@ -2264,7 +2264,7 @@
     },
     "gulp-clean": {
       "version": "0.3.2",
-      "from": "gulp-clean@>=0.3.2 <0.4.0",
+      "from": "https://registry.npmjs.org/gulp-clean/-/gulp-clean-0.3.2.tgz",
       "resolved": "https://registry.npmjs.org/gulp-clean/-/gulp-clean-0.3.2.tgz",
       "dev": true,
       "dependencies": {
@@ -5979,7 +5979,7 @@
     },
     "run-sequence": {
       "version": "1.2.2",
-      "from": "run-sequence@>=1.2.2 <2.0.0",
+      "from": "https://registry.npmjs.org/run-sequence/-/run-sequence-1.2.2.tgz",
       "resolved": "https://registry.npmjs.org/run-sequence/-/run-sequence-1.2.2.tgz",
       "dev": true
     },

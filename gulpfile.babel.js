@@ -11,9 +11,11 @@ const mocha = require('gulp-mocha');
 const clean = require('gulp-clean');
 const istanbul = require('gulp-istanbul');
 const isparta = require('isparta');
+const runsequence = require('run-sequence');
 
 const testFiles = 'test/**/*.js';
 const srcFiles = 'src/**/*.js';
+const buildFiles = 'build/**/*.*';
 
 gulp.task('copyyaml', () => {
   gulp.src('src/config/**/*.yaml')
@@ -41,9 +43,13 @@ gulp.task('runtests', ['transpileSource'], () => {
     .pipe(mocha());
 });
 
+gulp.task('watchSource', ['transpileSource'], () => {
+  gulp.watch(srcFiles, ['transpileSource']);
+});
 
-gulp.task('watch', ['transpileSource'], () => {
-  return watch(srcFiles);
+gulp.task('cleanbuildfiles', () => {
+  gulp.src(buildFiles, { read: false })
+    .pipe(clean());
 });
 
 

@@ -1,5 +1,25 @@
 import { buildSchema } from 'graphql';
-/***
+
+const schema = buildSchema(`
+  input AccountSignupInput {
+      name: String!
+  }
+  type AccountSignup {
+    key: String!
+    name: String!
+    status: String
+  }
+  type Query {
+    accountSignup(key: String): AccountSignup
+  }
+  type Mutation {
+    createAccountSignup(input: AccountSignupInput) : AccountSignup
+  }
+`);
+
+export default schema;
+
+/** *
 
 import {
 
@@ -67,24 +87,3 @@ const AccountSignupSchema = new GraphQLSchema({
 });
 
 **/
-
-const schema = buildSchema(`
-  input AccountSignupInput {
-      name: String!
-  }
-  type AccountSignup {
-    key: String!
-    name: String!
-    status: String
-  }
-  type Query {
-    accountSignup(key: String): AccountSignup
-  }
-  type Mutation {
-    createAccountSignup(input: AccountSignupInput) : AccountSignup
-  }
-`);
-
-export {
-  schema,
-}
