@@ -20,7 +20,7 @@ function createAccountSignup(req, res, next) {
     meta: {
       userId: 'ccd65819-4da4-4df9-9f24-5b10bf89ef89',
     },
-  }, (err, events, aggregateData, metaInfos) => {
+  }, (err, events, aggregateData) => {
     if (err) {
       log.info(`Error: ${err.name} : ${err.message} : ${err.more}`);
       res.status(400);
@@ -33,11 +33,9 @@ function createAccountSignup(req, res, next) {
     log.info(aggregateData);
     res.status(201);
     log.info(req);
-    const { id, name, status } = aggregateData;
+    const { name } = aggregateData;
     res.json({
-      message: `Account signup "${req.body.name}" created`,
-      entity: { id, name, status },
-      id: metaInfos.aggregateId,
+      message: `Account signup "${name}" created`,
     });
     next();
   });
