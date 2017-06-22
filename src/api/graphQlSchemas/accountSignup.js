@@ -53,11 +53,11 @@ const entityInterface = new GraphQLInterfaceType({
 
 const accountSignupType = new GraphQLObjectType({
   name: 'AccountSignup',
-  description: 'An account signup process',
+  description: 'An accountSignup signup process',
   fields: () => ({
     id: {
       type: new GraphQLNonNull(GraphQLString),
-      description: 'account id',
+      description: 'accountSignup id',
     },
     name: {
       type: new GraphQLNonNull(GraphQLString),

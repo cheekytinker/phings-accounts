@@ -9,8 +9,8 @@ chai.use(dirtyChai);
 
 describe('unit', () => {
   describe('domain', () => {
-    describe('account', () => {
-      describe('when start account signup command is handled', () => {
+    describe('accountSignup', () => {
+      describe('when start accountSignup signup command is handled', () => {
         it('should be named after the command it handles', () => {
           expect(precon.name).is.equal('startAccountSignup');
         });

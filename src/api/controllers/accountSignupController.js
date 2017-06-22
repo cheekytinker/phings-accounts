@@ -4,13 +4,13 @@ import { domain } from '../../cqrsDomain';
 import cqrsReadDomain from '../../cqrsReadDomain';
 
 function createAccountSignup(req, res, next) {
-  log.info('create account signup');
+  log.info('create accountSignup signup');
   domain.handle({
     id: uuidv4(),
     name: 'startAccountSignup',
     aggregate: {
       id: `${req.body.name}`,
-      name: 'account',
+      name: 'accountSignup',
     },
     payload: {
       name: `${req.body.name}`,

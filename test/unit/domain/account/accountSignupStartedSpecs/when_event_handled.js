@@ -9,12 +9,12 @@ chai.use(dirtyChai);
 
 describe('unit', () => {
   describe('domain', () => {
-    describe('account', () => {
+    describe('accountSignup', () => {
       describe('when event handled', () => {
-        it('should be named accountSignupStarted', () => {
-          expect(evt.name).to.equal('accountSignupStarted');
+        it('should be named accountSignupStartedSpecs', () => {
+          expect(evt.name).to.equal('accountSignupStartedSpecs');
         });
-        it('should set the data on the account aggregate', () => {
+        it('should set the data on the accountSignup aggregate', () => {
           const data = {
             name: 'myName',
             status: 'created',

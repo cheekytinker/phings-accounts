@@ -10,7 +10,7 @@ export default function createAccountSignup({ input: { name: accountName } }) {
       name: 'startAccountSignup',
       aggregate: {
         id: `${accountName}`,
-        name: 'account',
+        name: 'accountSignup',
       },
       payload: {
         name: `${accountName}`,

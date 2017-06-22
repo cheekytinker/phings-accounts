@@ -9,8 +9,8 @@ chai.use(dirtyChai);
 
 describe('unit', () => {
   describe('domain', () => {
-    describe('account', () => {
-      describe('when account already exists rule is run', () => {
+    describe('accountSignup', () => {
+      describe('when accountSignup already exists rule is run', () => {
         const changed = {};
         const events = {};
         const previous = {
@@ -49,7 +49,7 @@ describe('unit', () => {
             events,
             command)).not.to.throw();
         });
-        it('should raise error if command is startAccountSignup and account already exists', () => {
+        it('should raise error if command is startAccountSignup and accountSignup already exists', () => {
           stubGet.restore();
           stubGet = sinon.stub(previous, 'get');
           stubGet.withArgs('status').returns('created');

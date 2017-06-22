@@ -9,8 +9,8 @@ chai.use(dirtyChai);
 describe('unit', () => {
   describe('domain', () => {
     describe('account', () => {
-      describe('when account aggregate defined', () => {
-        it('should be named "account"', () => {
+      describe('when accountSignup aggregate defined', () => {
+        it('should be named "accountSignup"', () => {
           expect(account[0].name).is.equal('account');
         });
         it('should require snapshot after 10 events', () => {
