@@ -24,7 +24,7 @@ describe('unit', () => {
           cmd.cmdFn(data, agg);
           expect(data.status).to.equal('created');
         });
-        it('should apply "accountSignupStartedSpecs" event to aggregate with data', () => {
+        it('should apply "accountSignupStarted" event to aggregate with data', () => {
           const data = {
             name: 'myName',
           };
@@ -34,7 +34,7 @@ describe('unit', () => {
           const expectedEventDataToApply = data;
           expectedEventDataToApply.status = 'created';
           const mockAgg = sinon.mock(agg);
-          const nameOfEventToApply = 'accountSignupStartedSpecs';
+          const nameOfEventToApply = 'accountSignupStarted';
           mockAgg.expects('apply').withArgs(nameOfEventToApply, expectedEventDataToApply);
           cmd.cmdFn(data, mockAgg.object);
           mockAgg.verify();

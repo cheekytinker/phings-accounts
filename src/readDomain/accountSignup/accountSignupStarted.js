@@ -11,7 +11,6 @@ module.exports = denormalizer.defineViewBuilder({
   priority: 1,
 }, (data, vm) => {
   log.info(`ReadDomain AccountSignupStarted ${data}`);
-  log.info(`ReadDomain AccountSignupStarted creating ${data}`);
   vm.set('name', data.name);
   vm.set('status', data.status);
 });

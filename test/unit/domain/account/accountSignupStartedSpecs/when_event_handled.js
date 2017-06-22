@@ -12,7 +12,7 @@ describe('unit', () => {
     describe('accountSignup', () => {
       describe('when event handled', () => {
         it('should be named accountSignupStartedSpecs', () => {
-          expect(evt.name).to.equal('accountSignupStartedSpecs');
+          expect(evt.name).to.equal('accountSignupStarted');
         });
         it('should set the data on the accountSignup aggregate', () => {
           const data = {
