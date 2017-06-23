@@ -7,6 +7,35 @@ import { readAccountSignup } from '../../../../../src/api/controllers/accountSig
 
 chai.use(dirtyChai);
 
+function stubfindOne(stubReadDomain, res, next, findOneResponse) {
+  const ret = {
+    stubReadDomain,
+    res,
+    next,
+  };
+  const mockReadDomain = {
+    repository: {
+      extend: () => ({
+        findOne: findOneResponse,
+      }),
+    },
+  };
+  if (ret.stubReadDomain) {
+    ret.stubReadDomain.restore();
+  }
+  ret.stubReadDomain = sinon.stub(rd.default, 'readDomain');
+  ret.stubReadDomain.returns(mockReadDomain);
+  ret.res = {
+    status: () => {
+    },
+    json: () => {
+    },
+  };
+  ret.next = () => {
+  };
+  return ret;
+}
+
 describe('unit', () => {
   describe('api', () => {
     describe('controllers', () => {
@@ -16,8 +45,9 @@ describe('unit', () => {
           let res = null;
           let next = null;
           let stubReadDomain = null;
+          let accountName = null;
           before(() => {
-            const accountName = 'myaccount';
+            accountName = 'myaccount';
             req = {
               swagger: {
                 params: {
@@ -27,31 +57,6 @@ describe('unit', () => {
                 },
               },
             };
-            const mockReadDomain = {
-              repository: {
-                extend: () => ({
-                  findOne: (params, cb) => {
-                    cb(null, {
-                      attributes: {
-                        name: accountName,
-                        id: accountName,
-                        status: 'created',
-                      },
-                    });
-                  },
-                }),
-              },
-            };
-            stubReadDomain = sinon.stub(rd.default, 'readDomain');
-            stubReadDomain.returns(mockReadDomain);
-            res = {
-              status: () => {
-              },
-              json: () => {
-              },
-            };
-            next = () => {
-            };
           });
           after(() => {
             if (stubReadDomain) {
@@ -59,8 +64,39 @@ describe('unit', () => {
             }
           });
           it('should return 200 if successful', (done) => {
+            ({ res, next, stubReadDomain } =
+              stubfindOne(
+                stubReadDomain,
+                res,
+                next,
+                (params, cb) => {
+                  cb(null, {
+                    attributes: {
+                      name: accountName,
+                      id: accountName,
+                      status: 'created',
+                    },
+                  });
+                },
+              ));
             const mock = sinon.mock(res);
             mock.expects('status').once().withArgs(200);
+            readAccountSignup(req, res, next);
+            mock.verify();
+            done();
+          });
+          it('should return 500 if repo returns err', (done) => {
+            ({ res, next, stubReadDomain } =
+              stubfindOne(
+                stubReadDomain,
+                res,
+                next,
+                (params, cb) => {
+                  cb('An error', null);
+                },
+              ));
+            const mock = sinon.mock(res);
+            mock.expects('status').once().withArgs(500);
             readAccountSignup(req, res, next);
             mock.verify();
             done();

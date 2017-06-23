@@ -18,8 +18,8 @@ export default function readAccountSignup({ key: keyToFind }) {
         return;
       }
       if (accountSignup === null) {
-        log.info(`Account signup not found ${keyToFind}`);
-        reject(`Account signup not found ${keyToFind}`);
+        log.info(`Account signup not found for ${keyToFind}`);
+        reject(`Account signup not found for ${keyToFind}`);
         return;
       }
       log.info('success readAccountSignup');

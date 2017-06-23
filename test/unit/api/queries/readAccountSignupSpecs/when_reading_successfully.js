@@ -26,7 +26,6 @@ describe('unit', () => {
               status: 'created',
             },
           };
-          repoStub.callsArgWith(1, null, accountSignup);
           const rd = {
             repository: {
               extend: () => repo,
@@ -39,8 +38,10 @@ describe('unit', () => {
           });
           after(() => {
             stub.restore();
+            repoStub.restore();
           });
           it('should return only expected fields', (done) => {
+            repoStub.callsArgWith(1, null, accountSignup);
             ras.default({ key: 'myAccount' })
               .then((entity) => {
                 expect(entity).to.deep.equal({
@@ -48,6 +49,30 @@ describe('unit', () => {
                   name: 'myAccountName',
                   status: 'created',
                 });
+                done();
+              });
+          });
+          it('should error if no key is supplied', (done) => {
+            ras.default({ key: '' })
+              .catch((err) => {
+                expect(err).to.equal('No key supplied');
+                done();
+              });
+          });
+          it('should error if repository errors', (done) => {
+            repoStub.callsArgWith(1, 'An error', null);
+            ras.default({ key: 'Akey' })
+              .catch((err) => {
+                expect(err).to.equal('An error');
+                done();
+              });
+          });
+          it('should error if repository returns null object', (done) => {
+            repoStub.callsArgWith(1, null, null);
+            const key = 'AKey';
+            ras.default({ key })
+              .catch((err) => {
+                expect(err).to.equal(`Account signup not found for ${key}`);
                 done();
               });
           });
