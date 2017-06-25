@@ -1,4 +1,4 @@
-import denormalizer from 'cqrs-eventdenormalizer';
+import { denormalizer } from './denormalizerWrapper';
 import config from './config/denormalizer';
 import { log } from './utilities/logging';
 
@@ -32,4 +32,8 @@ const myDenormalizer = () => {
 
 export default {
   readDomain: myDenormalizer,
+  reset: () => {
+    log.info('resetting readomain');
+    singleDenormalizer = null;
+  },
 };

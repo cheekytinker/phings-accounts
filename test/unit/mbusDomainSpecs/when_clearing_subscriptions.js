@@ -14,6 +14,7 @@ describe('unit', () => {
       const sandbox = sinon.sandbox.create();
       let stubBus = null;
       beforeEach(() => {
+        d.default.clearSubscriptions();
         stubBus = sandbox.stub(servicebus, 'bus');
       });
       afterEach(() => {
