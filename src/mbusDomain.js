@@ -15,12 +15,16 @@ function eventHandler(message) {
 function commandHandler(message) {
   const command = JSON.parse(message);
   log.info(`Handler command ${command}`);
-  evtSubscriptions.forEach((subscriber) => {
+  cmdSubscriptions.forEach((subscriber) => {
     subscriber(command);
   });
 }
 
 export default {
+  clearSubscriptions: () => {
+    evtSubscriptions.length = 0;
+    cmdSubscriptions.length = 0;
+  },
   emitCommand: (command) => {
     log.info(command);
     servicebus.bus().publish('command', JSON.stringify(command));

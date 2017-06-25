@@ -1,4 +1,4 @@
-import { describe, it, before, beforeEach, after, afterEach } from 'mocha';
+import { describe, it, beforeEach, afterEach } from 'mocha';
 import chai from 'chai';
 import dirtyChai from 'dirty-chai';
 import sinon from 'sinon';
@@ -9,18 +9,16 @@ const expect = chai.expect;
 chai.use(dirtyChai);
 
 describe('unit', () => {
-  describe('mbusDomainSpecs', () => {
+  describe('mbusDomain', () => {
     describe('when asked to', () => {
+      const sandbox = sinon.sandbox.create();
       let stubBus = null;
-      stubBus = sinon.stub(servicebus, 'bus');
-      before(() => {
-      });
       beforeEach(() => {
+        d.default.clearSubscriptions();
+        stubBus = sandbox.stub(servicebus, 'bus');
       });
       afterEach(() => {
-      });
-      after(() => {
-        stubBus.restore();
+        sandbox.restore();
       });
       it('emit a command should call publish on bus with a command', () => {
         let messageName = null;
