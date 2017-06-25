@@ -101,6 +101,22 @@ describe('unit', () => {
             mock.verify();
             done();
           });
+          it('should return 404 if repo cannot find signup', (done) => {
+            ({ res, next, stubReadDomain } =
+              stubfindOne(
+                stubReadDomain,
+                res,
+                next,
+                (params, cb) => {
+                  cb(null, null);
+                },
+              ));
+            const mock = sinon.mock(res);
+            mock.expects('status').once().withArgs(404);
+            readAccountSignup(req, res, next);
+            mock.verify();
+            done();
+          });
         });
       });
     });

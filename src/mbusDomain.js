@@ -1,10 +1,5 @@
-import servicebus from 'servicebus';
-import appConfig from './config/application';
+import servicebus from './servicebusWrapper';
 import { log } from './utilities/logging';
-
-const bus = servicebus.bus({
-  url: appConfig.amqpHost,
-});
 
 const evtSubscriptions = [];
 const cmdSubscriptions = [];
@@ -28,25 +23,25 @@ function commandHandler(message) {
 export default {
   emitCommand: (command) => {
     log.info(command);
-    bus.publish('command', JSON.stringify(command));
+    servicebus.bus().publish('command', JSON.stringify(command));
   },
   onCommand: (callback) => {
     if (cmdSubscriptions.length === 0) {
-      bus.subscribe('command', commandHandler);
+      servicebus.bus().subscribe('command', commandHandler);
     }
     cmdSubscriptions.push(callback);
   },
   emitEvent: (event) => {
     log.info(event);
-    bus.publish('event', JSON.stringify(event));
+    servicebus.bus().publish('event', JSON.stringify(event));
   },
   emitNotification: (not) => {
     log.info(not);
-    bus.publish('notification', JSON.stringify(not));
+    servicebus.bus().publish('notification', JSON.stringify(not));
   },
   onEvent: (callback) => {
     if (evtSubscriptions.length === 0) {
-      bus.subscribe('event', eventHandler);
+      servicebus.bus().subscribe('event', eventHandler);
     }
     evtSubscriptions.push(callback);
   },

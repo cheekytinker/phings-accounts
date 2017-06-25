@@ -23,7 +23,7 @@ export default function createAccountSignup({ input: { name: accountName } }) {
     }, (err, events, aggregateData) => {
       if (err) {
         log.info(`Error: ${err.name} : ${err.message} : ${err.more}`);
-        reject(`Error "${err.message}"`);
+        reject(`Error: "${err.message}"`);
         return;
       }
       log.info(aggregateData);
