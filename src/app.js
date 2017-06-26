@@ -6,7 +6,7 @@ import { log } from './utilities/logging';
 import './utilities/initialiseExternalServices';
 import appConfig from './config/application';
 import config from './config/denormalizer';
-import { domain } from './cqrsDomain';
+import { domain, reset } from './cqrsDomain';
 import cqrsReadDomain from './cqrsReadDomain';
 import { graphQlServerStart } from './graphQl/server';
 
@@ -44,6 +44,8 @@ viewmodel.read(config.repository, (err) => {
     log.info(`read domain missing event ${evnt}`);
   });
   readDomainInst.init((err2, warnings2) => {
+    reset();
+    const dom = domain();
     if (warnings2) {
       log.info(`Warnings ${warnings2}`);
       throw new Error('Cqrs Read Domain failed to start');
@@ -52,7 +54,7 @@ viewmodel.read(config.repository, (err) => {
       log.info(`Read Domain Error ${err2}`);
       return;
     }
-    domain.init((err3, warnings) => {
+    dom.init((err3, warnings) => {
       if (warnings) {
         log.info(`Warnings ${warnings}`);
         throw new Error('Cqrs Domain failed to start');
@@ -61,7 +63,7 @@ viewmodel.read(config.repository, (err) => {
         log.info(`Cqrs Domain Error ${err}`);
         return;
       }
-      const domainInfo = domain.getInfo();
+      const domainInfo = dom.getInfo();
       log.info(`Domain Info ${domainInfo}`);
       msgBus.onEvent((evt) => {
         log.info(`bus raised event ${evt.name}`);
@@ -69,13 +71,13 @@ viewmodel.read(config.repository, (err) => {
       });
       msgBus.onCommand((cmd) => {
         log.info(`received command ${cmd.name}`);
-        domain.handle(cmd);
+        dom.handle(cmd);
       });
-      domain.onEvent((event) => {
+      dom.onEvent((event) => {
         log.info(`domain raised event ${event.name}`);
         msgBus.emitEvent(event);
       });
-      const info = domain.getInfo();
+      const info = dom.getInfo();
       log.info(info);
       SwaggerRestify.create(swaggerConfig, (swaggerErr, swaggerRestify) => {
         log.info('Restify started');

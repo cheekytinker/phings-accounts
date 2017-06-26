@@ -1,4 +1,4 @@
-import {describe, it} from 'mocha';
+import { describe, it } from 'mocha';
 import chai from 'chai';
 import dirtyChai from 'dirty-chai';
 import viewmodel from 'viewmodel';
@@ -7,10 +7,11 @@ import cqrsReadDomain from '../../../src/cqrsReadDomain';
 
 chai.use(dirtyChai);
 
-describe('unit', () => {
-  describe('accountSignupControllerSpecs', () => {
+describe('integration', () => {
+  describe('cqrsReadDomain', () => {
     describe('when initialised', () => {
       it('should succeed', (done) => {
+        cqrsReadDomain.reset();
         viewmodel.read(config.repository, (err) => {
           if (err) {
             done(err);

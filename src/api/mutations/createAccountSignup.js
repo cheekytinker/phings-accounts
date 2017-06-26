@@ -1,11 +1,11 @@
 import uuidv4 from 'uuid';
 import { log } from './../../utilities/logging';
-import { domain } from '../../cqrsDomain';
+import { domain } from '../../domainWrapper';
 
 export default function createAccountSignup({ input: { name: accountName } }) {
   log.info('createAccountSignup');
   return new Promise((resolve, reject) => {
-    domain.handle({
+    domain().handle({
       id: uuidv4(),
       name: 'startAccountSignup',
       aggregate: {

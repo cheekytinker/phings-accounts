@@ -1,8 +1,8 @@
-import { describe, it, before, after } from 'mocha';
+import { describe, it, beforeEach, afterEach } from 'mocha';
 import chai from 'chai';
 import dirtyChai from 'dirty-chai';
 import sinon from 'sinon';
-import * as d from '../../../../../src/cqrsDomain';
+import * as d from '../../../../../src/domainWrapper';
 import { createAccountSignup } from '../../../../../src/api/controllers/accountSignupController';
 
 chai.use(dirtyChai);
@@ -17,7 +17,8 @@ describe('unit', () => {
           let next = null;
           let stubHandle = null;
           const accountName = 'myaccount';
-          before(() => {
+          const sandbox = sinon.sandbox.create();
+          beforeEach(() => {
             req = {
               body: {
                 name: accountName,
@@ -31,11 +32,18 @@ describe('unit', () => {
             };
             next = () => {
             };
-            const domain = d.domain;
-            stubHandle = sinon.stub(domain, 'handle');
+            const dm = {
+              handle: () => {},
+              getInfo: () => {},
+            };
+            const stubDomain = sandbox.stub(d.default, 'domain');
+            stubDomain.returns(dm);
+            stubHandle = sandbox.stub(dm, 'handle');
           });
-          after(() => {
-            stubHandle.restore();
+          afterEach(() => {
+            if (sandbox) {
+              sandbox.restore();
+            }
           });
           it('should return 201 if successful', () => {
             stubHandle.callsArgWith(
@@ -50,7 +58,7 @@ describe('unit', () => {
               {
                 aggregateId: accountName,
               });
-            const mock = sinon.mock(res);
+            const mock = sandbox.mock(res);
             mock.expects('status').once().withArgs(201);
             createAccountSignup(req, res, next);
             mock.verify();
@@ -68,7 +76,7 @@ describe('unit', () => {
               {
                 aggregateId: accountName,
               });
-            const mock = sinon.mock(res);
+            const mock = sandbox.mock(res);
             mock.expects('json').once().withArgs({
               message: `Account signup "${accountName}" created` });
             createAccountSignup(req, res, next);
@@ -86,7 +94,7 @@ describe('unit', () => {
               null,
               null,
               null);
-            const mock = sinon.mock(res);
+            const mock = sandbox.mock(res);
             mock.expects('status').once().withArgs(400);
             mock.expects('json').once().withArgs(
               sinon.match(obj => obj.message === `Error "${myError.message}"`));

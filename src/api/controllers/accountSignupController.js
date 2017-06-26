@@ -1,11 +1,11 @@
 import uuidv4 from 'uuid';
 import { log } from './../../utilities/logging';
-import { domain } from '../../cqrsDomain';
+import { domain } from '../../domainWrapper';
 import cqrsReadDomain from '../../cqrsReadDomain';
 
 function createAccountSignup(req, res, next) {
   log.info('create accountSignup signup');
-  domain.handle({
+  domain().handle({
     id: uuidv4(),
     name: 'startAccountSignup',
     aggregate: {

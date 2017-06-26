@@ -2,15 +2,17 @@ import { describe, it } from 'mocha';
 import chai from 'chai';
 import dirtyChai from 'dirty-chai';
 import '../../../src/utilities/initialiseExternalServices';
-import { domain } from '../../../src/cqrsDomain';
+import { domain, reset } from '../../../src/cqrsDomain';
 
 chai.use(dirtyChai);
 
 describe('integration', () => {
-  describe('cqrsDomainSpecs', () => {
+  describe('cqrsDomain', () => {
     describe('when initialised', () => {
       it('should start successfully', (done) => {
-        domain.init((err, warnings) => {
+        reset();
+        const dom = domain();
+        dom.init((err, warnings) => {
           if (warnings) {
             console.log(`Warnings ${warnings}`);
             return;
@@ -19,7 +21,7 @@ describe('integration', () => {
             console.log(`Error ${err}`);
             return;
           }
-          const info = domain.getInfo();
+          const info = dom.getInfo();
           console.log(info);
           done();
         });
