@@ -29,6 +29,26 @@ describe('integration', () => {
           });
         });
       });
+      it('should succeed if called twice', (done) => {
+        cqrsReadDomain.reset();
+        viewmodel.read(config.repository, (err) => {
+          if (err) {
+            done(err);
+          }
+          cqrsReadDomain.readDomain();
+          cqrsReadDomain.readDomain().init((err2, warnings2) => {
+            if (warnings2) {
+              done(err2);
+              return;
+            }
+            if (err2) {
+              done(err2);
+              return;
+            }
+            done();
+          });
+        });
+      });
     });
   });
 });

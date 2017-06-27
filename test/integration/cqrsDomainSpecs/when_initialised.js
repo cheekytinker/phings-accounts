@@ -26,6 +26,24 @@ describe('integration', () => {
           done();
         });
       });
+      it('should start if called twice', (done) => {
+        reset();
+        domain();
+        const dom = domain();
+        dom.init((err, warnings) => {
+          if (warnings) {
+            console.log(`Warnings ${warnings}`);
+            return;
+          }
+          if (err) {
+            console.log(`Error ${err}`);
+            return;
+          }
+          const info = dom.getInfo();
+          console.log(info);
+          done();
+        });
+      });
     });
   });
 });

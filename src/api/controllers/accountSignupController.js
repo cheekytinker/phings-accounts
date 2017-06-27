@@ -1,6 +1,6 @@
 import uuidv4 from 'uuid';
 import { log } from './../../utilities/logging';
-import { domain } from '../../domainWrapper';
+import { domain } from '../../cqrsDomain';
 import cqrsReadDomain from '../../cqrsReadDomain';
 
 function createAccountSignup(req, res, next) {

@@ -2,7 +2,7 @@ import { describe, it, beforeEach, afterEach } from 'mocha';
 import chai from 'chai';
 import dirtyChai from 'dirty-chai';
 import sinon from 'sinon';
-import * as d from '../../../../../src/domainWrapper';
+import * as d from '../../../../../src/cqrsDomain';
 import createAccountSignup from '../../../../../src/api/mutations/createAccountSignup';
 
 const expect = chai.expect;

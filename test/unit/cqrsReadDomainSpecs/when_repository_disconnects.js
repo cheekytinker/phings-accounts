@@ -5,7 +5,7 @@ import readDomain from '../../../src/cqrsReadDomain';
 
 describe('unit', () => {
   describe('cqrsReadDomain', () => {
-    describe('when initialised', () => {
+    describe('when repository disconnects', () => {
       let denormStub = null;
       let repositoryOnStub = null;
       let revisionGuardStoreOnStub = null;
