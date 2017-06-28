@@ -7,9 +7,9 @@ WORKDIR /usr/src/app
 # Install app dependencies
 COPY package.json /usr/src/app/
 # Bundle app source
-COPY . /usr/src/app
+COPY ./build/src /usr/src/app
 
 RUN npm install
 
-EXPOSE 10011
+EXPOSE 10010 4000
 CMD npm start

@@ -9,7 +9,8 @@ accounts:
     - db
     - messaging
   ports:
-    - '10011:10011'
+    - '10010:10010'
+    - '4000:4000'
 db:
   command: '--storageEngine wiredTiger'
   image: 'mongo:latest'
