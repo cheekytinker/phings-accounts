@@ -8,6 +8,8 @@ machine:
     - rabbitmq-server
   hosts:
     mongo: 127.0.0.1
+  environment:
+    PATH: "${PATH}:${HOME}/${CIRCLE_PROJECT_REPONAME}/node_modules/.bin"
 
 dependencies:
   override:
@@ -15,6 +17,8 @@ dependencies:
     - yarn run clean
     - yarn run lint
     - yarn run transpile
+  cache_directories:
+    - ~/.cache/yarn
 test:
   override:
     - yarn run cover
