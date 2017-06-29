@@ -3,7 +3,7 @@ machine:
     version: 6.9.4
   services:
     - docker
-    - mongodb
+    - mongo
     - elasticsearch
     - rabbitmq-server
   hosts:
