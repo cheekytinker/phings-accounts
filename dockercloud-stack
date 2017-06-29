@@ -9,12 +9,15 @@ accounts:
     - db
     - messaging
   ports:
-    - '10011:10011'
+    - '10010:10010'
+    - '4000:4000'
+  restart: always
 db:
   command: '--storageEngine wiredTiger'
   image: 'mongo:latest'
   ports:
     - '27017:27017'
+  restart: always
   volumes:
     - /data/mongo
 messaging:

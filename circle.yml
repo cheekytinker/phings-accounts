@@ -3,38 +3,49 @@ machine:
     version: 6.9.4
   services:
     - docker
-    - mongodb
+    - mongod
     - elasticsearch
     - rabbitmq-server
   hosts:
     mongo: 127.0.0.1
+  environment:
+    PATH: "${PATH}:${HOME}/${CIRCLE_PROJECT_REPONAME}/node_modules/.bin"
 
 dependencies:
   override:
-    - npm install
-    - npm run build
-
+    - yarn install
+    - yarn run clean
+    - yarn run lint
+    - yarn run transpile
+  cache_directories:
+    - ~/.cache/yarn
 test:
   override:
-    - npm run lint
-    - npm run cover
-    - npm test
+    - yarn run cover
+    - yarn run checkcover
+    - yarn run postman
 
   post:
     - mkdir -p $CIRCLE_ARTIFACTS/coverage-report
     - mv coverage $CIRCLE_ARTIFACTS/coverage-report
     - mkdir -p $CIRCLE_TEST_REPORTS/junit
     - mv test-results.xml $CIRCLE_TEST_REPORTS/junit
-    - docker info
-    - docker build -t cheekytinker/phings-accounts:latest .
+    - mkdir -p $CIRCLE_TEST_REPORTS/postman
+    - mv postmanXmlResults.xml $CIRCLE_TEST_REPORTS/postman
+    - mv postmanHtmlResults.html $CIRCLE_TEST_REPORTS/postman
+
 deployment:
   development:
     branch: /.*-feature$/
     commands:
+      - docker info
+      - docker build -t cheekytinker/phings-accounts:$CIRCLE_BRANCH .
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-      - docker push cheekytinker/phings-accounts:latest
+      - docker push cheekytinker/phings-accounts:$CIRCLE_BRANCH
   production:
     branch: master
     commands:
+      - docker info
+      - docker build -t cheekytinker/phings-accounts:latest .
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
       - docker push cheekytinker/phings-accounts:latest

@@ -1,0 +1,147 @@
+swagger: "2.0"
+info:
+  version: "0.0.1"
+  title: phings-accounts
+# during dev, should point to your local machine
+host: localhost:10010
+# basePath prefixes all resource paths
+basePath: /
+#
+schemes:
+  # tip: remove http to make production-grade
+  - http
+  - https
+# format of bodies a client can send (Content-Type)
+consumes:
+  - application/json
+# format of the responses to the client (Accepts)
+produces:
+  - application/json
+paths:
+  /accountSignups:
+    x-swagger-router-controller: accountSignupController
+    
+    post:
+      description: create an accountSignup for use in the api
+      operationId: createAccountSignup
+      parameters:
+        - name: accountSignup
+          in: body
+          description: basic accountSignup signup information
+          required: true
+          schema:
+            $ref: "#/definitions/CreateAccountSignupRequest"
+      responses:
+        "201":
+          description: success
+          schema:
+            $ref: "#/definitions/CreateAccountSignupResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /accountSignups/{key}:
+    x-swagger-router-controller: accountSignupController
+    get:
+      description: get accountSignup
+      operationId: readAccountSignup
+      parameters:
+        - name: key
+          in: path
+          type: string
+          description: key of the signup
+          required: true
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: "#/definitions/ReadAccountSignupResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /authTokens:
+    x-swagger-router-controller: authenticateControllerMethodFactory
+    post:
+      description: create jwt for use in api calls
+      operationId: createToken
+      parameters:
+        - name: credentials
+          in: body
+          description: the credentials
+          required: true
+          schema:
+            $ref: "#/definitions/CreateTokenRequest"
+      responses:
+        "201":
+          description: Success
+          schema:
+            $ref: "#/definitions/CreateTokenResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /swagger:
+    x-swagger-pipe: swagger_raw
+# complex objects have schema definitions
+definitions:
+  CreateAccountSignupRequest:
+    properties:
+      name:
+        type: string
+      primaryContact:
+        $ref: "#/definitions/CreateUserRequest"
+    required:
+      - name
+      - primaryContact
+  CreateUserRequest:
+    properties:
+      key:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      userName:
+        type: string
+      password:
+        type: string
+      email:
+        type: string
+        format: email
+    required:
+      - email
+      - userName
+      - password
+      - firstName
+      - lastName
+  CreateAccountSignupResponse:
+    properties:
+      key:
+        type: string
+  ReadAccountSignupResponse:
+    properties:
+      key:
+        type: string
+  CreateTokenRequest:
+    properties:
+      userName:
+        type: string
+      password:
+        type: string
+    required:
+      - password
+      - userName
+  CreateTokenResponse:
+    required:
+       - token
+    properties:
+      token:
+        type: string
+  ErrorResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
+  

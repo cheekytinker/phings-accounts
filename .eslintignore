@@ -1,1 +1,4 @@
 gulpfile.babel.js
+*.yaml
+*.json
+runPostmanTests.js
