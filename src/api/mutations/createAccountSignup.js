@@ -26,7 +26,7 @@ export default function createAccountSignup({ input: { name: accountName } }) {
         reject(`Error: "${err.message}"`);
         return;
       }
-      log.info(aggregateData);
+      log.info(JSON.stringify(aggregateData));
       const { id, name, status } = aggregateData;
       resolve({ id, name, status });
     });

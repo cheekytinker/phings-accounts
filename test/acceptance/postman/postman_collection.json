@@ -1,0 +1,268 @@
+{
+	"variables": [],
+	"info": {
+		"name": "phings-accounts",
+		"_postman_id": "bb8a6ac9-5745-dff4-878e-c216e37ab0df",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "accountSignups",
+			"description": "",
+			"item": [
+				{
+					"name": "GQL createAccountSignup",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Should return 200 response code\"] = responseCode.code === 200;",
+									"tests[\"Should return createAccountSingup name\"] = jsonData.data.createAccountSignup.name === environment.accountName;",
+									"",
+									""
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"postman.setEnvironmentVariable(\"accountName\",'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) { var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8); return v.toString(16); }));"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{graphApiUri}}/graphql?",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"query\":\"mutation {\\n  createAccountSignup(input: {name: \\\"{{accountName}}\\\"}) {\\n    name\\n  }\\n}\",\"variables\":null}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Delay",
+					"request": {
+						"url": "https://echo.getpostman.com/delay/5",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "GQL readAccountSignup",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Should return 200 response code\"] = responseCode.code === 200;",
+									"tests[\"Should contain data\"] = jsonData.data.accountSignup.name === environment.accountName;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{graphApiUri}}/graphql?",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"query\":\"{accountSignup(key:\\\"{{accountName}}\\\") {\\n  key,\\n  name\\n}}\",\"variables\":null,\"operationName\":null}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "REST Start Account Signup",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Should return 201 response code\"] = responseCode.code === 201;"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"postman.setEnvironmentVariable(\"accountName\",'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) { var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8); return v.toString(16); }));"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{uri}}/accountSignups",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"{{accountName}}\",\n\t\"primaryContact\": {\n\t\t\"email\": \"a@b.com\",\n\t\t\"userName\": \"myaccount\",\n\t\t\"password\": \"anthony1234\",\n\t\t\"firstName\": \"Anthony\",\n\t\t\"lastName\": \"Hollingsworth\"\n\t}\n}"
+						},
+						"description": "create an account"
+					},
+					"response": []
+				},
+				{
+					"name": "Delay",
+					"request": {
+						"url": "https://echo.getpostman.com/delay/5",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "REST Read Account Signup",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Should return 200 response code\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{uri}}/accountSignups/{{accountName}}",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"aa1\",\n\t\"primaryContact\": {\n\t\t\"email\": \"a@b.com\",\n\t\t\"userName\": \"myaccount\",\n\t\t\"password\": \"anthony1234\",\n\t\t\"firstName\": \"Anthony\",\n\t\t\"lastName\": \"Hollingsworth\"\n\t}\n}"
+						},
+						"description": "read an account"
+					},
+					"response": []
+				},
+				{
+					"name": "REST Account already taken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Should return 400 response code\"] = responseCode.code === 400;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{uri}}/accountSignups",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"25a42810-63cb-4f9c-91c0-c261bb868a67\",\n\t\"primaryContact\": {\n\t\t\"email\": \"a@b.com\",\n\t\t\"userName\": \"myaccount\",\n\t\t\"password\": \"anthony1234\",\n\t\t\"firstName\": \"Anthony\",\n\t\t\"lastName\": \"Hollingsworth\"\n\t}\n}"
+						},
+						"description": "Try to create account with name already taken"
+					},
+					"response": []
+				},
+				{
+					"name": "REST Account signup does not exist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Should return 404 response code\"] = responseCode.code === 404;"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"postman.setEnvironmentVariable(\"nonExistantAccountName\",'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) { var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8); return v.toString(16); }));"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{uri}}/accountSignups/{{nonExistantAccountName}}",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"aa1\",\n\t\"primaryContact\": {\n\t\t\"email\": \"a@b.com\",\n\t\t\"userName\": \"myaccount\",\n\t\t\"password\": \"anthony1234\",\n\t\t\"firstName\": \"Anthony\",\n\t\t\"lastName\": \"Hollingsworth\"\n\t}\n}"
+						},
+						"description": "read an accountRead account signup that does not exist returns 404"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
