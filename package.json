@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Accounts service",
   "main": "build/src/app.js",
+  "readme": "README.md",
   "babel": {
     "presets": [
       "es2015"
@@ -30,7 +31,7 @@
     "cover": "cross-env NODE_ENV=test nyc --reporter=lcov --reporter=text-lcov  mocha --reporter mocha-junit-reporter test --recursive",
     "lint": "eslint \"src\\**\" --debug",
     "clean": "gulp cleanbuildfiles",
-    "build": "npm run clean && npm run lint && npm run transpile && npm run cover && npm run checkcover",
+    "build": "yarn run clean && yarn run lint && yarn run transpile && yarn run cover && yarn run checkcover",
     "start": "cross-env DEBUG=swagger-tools:middleware:* node build/src/index.js",
     "edit": "cross-env swagger_swagger_fileName=src/config/swagger/swagger.yaml swagger project edit"
   },
