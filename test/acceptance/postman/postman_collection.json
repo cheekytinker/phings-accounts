@@ -214,7 +214,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"25a42810-63cb-4f9c-91c0-c261bb868a67\",\n\t\"primaryContact\": {\n\t\t\"email\": \"a@b.com\",\n\t\t\"userName\": \"myaccount\",\n\t\t\"password\": \"anthony1234\",\n\t\t\"firstName\": \"Anthony\",\n\t\t\"lastName\": \"Hollingsworth\"\n\t}\n}"
+							"raw": "{\n\t\"name\": \"{{accountName}}\",\n\t\"primaryContact\": {\n\t\t\"email\": \"a@b.com\",\n\t\t\"userName\": \"myaccount\",\n\t\t\"password\": \"anthony1234\",\n\t\t\"firstName\": \"Anthony\",\n\t\t\"lastName\": \"Hollingsworth\"\n\t}\n}"
 						},
 						"description": "Try to create account with name already taken"
 					},
