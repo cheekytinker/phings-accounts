@@ -33,6 +33,7 @@
     "clean": "gulp cleanbuildfiles",
     "build": "yarn run clean && yarn run lint && yarn run transpile && yarn run cover && yarn run checkcover && yarn run postman",
     "start": "cross-env DEBUG=swagger-tools:middleware:* node build/src/index.js",
+    "dockerstart": "cross-env DEBUG=swagger-tools:middleware:* node index.js",
     "edit": "cross-env swagger_swagger_fileName=src/config/swagger/swagger.yaml swagger project edit",
     "postman": "cross-env DEBUG=swagger-tools:middleware:* node ./runPostmanTests.js",
     "postmantest": "yarn run transpile && yarn run postman"

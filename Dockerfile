@@ -13,5 +13,6 @@ COPY ./build/src /usr/src/app
 RUN curl -o- -L https://yarnpkg.com/install.sh | bash
 RUN $HOME/.yarn/bin/yarn install
 
+# inof only, not actually exposing anything with this
 EXPOSE 10010 4000
-CMD npm start
+CMD yarn run dockerstart
