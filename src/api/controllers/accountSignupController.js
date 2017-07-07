@@ -1,44 +1,26 @@
-import uuidv4 from 'uuid';
 import { log } from './../../utilities/logging';
-import { domain } from '../../cqrsDomain';
 import cqrsReadDomain from '../../cqrsReadDomain';
+import createAccountSignup from '../mutations/createAccountSignup';
 
-function createAccountSignup(req, res, next) {
+function createAccountSignupRest(req, res, next) {
   log.info('create accountSignup signup');
-  domain().handle({
-    id: uuidv4(),
-    name: 'startAccountSignup',
-    aggregate: {
-      id: `${req.body.name}`,
-      name: 'accountSignup',
-    },
-    payload: {
-      name: `${req.body.name}`,
-    },
-    revision: 0,
-    version: 1,
-    meta: {
-      userId: 'ccd65819-4da4-4df9-9f24-5b10bf89ef89',
-    },
-  }, (err, events, aggregateData) => {
-    if (err) {
+  return createAccountSignup({ input: { name: req.body.name } })
+    .then((data) => {
+      res.status(201);
+      const { name } = data;
+      res.json({
+        message: `Account signup "${name}" created`,
+      });
+      next();
+    })
+    .catch((err) => {
       log.info(`Error: ${err.name} : ${err.message} : ${err.more}`);
       res.status(400);
       res.json({
         message: `Error "${err.message}"`,
       });
       next();
-      return;
-    }
-    log.info(aggregateData);
-    res.status(201);
-    log.info(req);
-    const { name } = aggregateData;
-    res.json({
-      message: `Account signup "${name}" created`,
     });
-    next();
-  });
 }
 
 function readAccountSignup(req, res, next) {
@@ -72,6 +54,6 @@ function readAccountSignup(req, res, next) {
   });
 }
 export {
-  createAccountSignup,
+  createAccountSignupRest,
   readAccountSignup,
 };

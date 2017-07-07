@@ -23,7 +23,7 @@ paths:
     
     post:
       description: create an accountSignup for use in the api
-      operationId: createAccountSignup
+      operationId: createAccountSignupRest
       parameters:
         - name: accountSignup
           in: body
