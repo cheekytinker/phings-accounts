@@ -4,6 +4,7 @@ import dirtyChai from 'dirty-chai';
 import sinon from 'sinon';
 import * as cqrsReadDomain from '../../../../../src/cqrsReadDomain';
 import * as ras from '../../../../../src/api/queries/readAccountSignup';
+import errorCodes from '../../../../../src/utilities/errorCodes';
 
 const expect = chai.expect;
 chai.use(dirtyChai);
@@ -11,7 +12,7 @@ chai.use(dirtyChai);
 describe('unit', () => {
   describe('api', () => {
     describe('queries', () => {
-      describe('readAccountSignup', () => {
+      describe('readAccountSignupRest', () => {
         describe('when reading successfully', () => {
           const repo = {
             findOne: (opt, cb) => {
@@ -55,7 +56,10 @@ describe('unit', () => {
           it('should error if no key is supplied', (done) => {
             ras.default({ key: '' })
               .catch((err) => {
-                expect(err).to.equal('No key supplied');
+                expect(err).to.deep.equal({
+                  code: errorCodes.badRequest,
+                  message: 'No key supplied',
+                });
                 done();
               });
           });
@@ -63,7 +67,10 @@ describe('unit', () => {
             repoStub.callsArgWith(1, 'An error', null);
             ras.default({ key: 'Akey' })
               .catch((err) => {
-                expect(err).to.equal('An error');
+                expect(err).to.deep.equal({
+                  code: errorCodes.serverError,
+                  message: 'An error',
+                });
                 done();
               });
           });
@@ -72,7 +79,10 @@ describe('unit', () => {
             const key = 'AKey';
             ras.default({ key })
               .catch((err) => {
-                expect(err).to.equal(`Account signup not found for ${key}`);
+                expect(err).to.deep.equal({
+                  code: errorCodes.notFound,
+                  message: `Account signup not found for ${key}`,
+                });
                 done();
               });
           });

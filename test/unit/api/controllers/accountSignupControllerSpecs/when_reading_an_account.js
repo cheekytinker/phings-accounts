@@ -2,39 +2,11 @@ import { describe, it, before, after } from 'mocha';
 import chai from 'chai';
 import dirtyChai from 'dirty-chai';
 import sinon from 'sinon';
-import * as rd from '../../../../../src/cqrsReadDomain';
-import { readAccountSignup } from '../../../../../src/api/controllers/accountSignupController';
+import * as ras from '../../../../../src/api/queries/readAccountSignup';
+import errorCodes from '../../../../../src/utilities/errorCodes';
+import { readAccountSignupRest } from '../../../../../src/api/controllers/accountSignupController';
 
 chai.use(dirtyChai);
-
-function stubfindOne(stubReadDomain, res, next, findOneResponse) {
-  const ret = {
-    stubReadDomain,
-    res,
-    next,
-  };
-  const mockReadDomain = {
-    repository: {
-      extend: () => ({
-        findOne: findOneResponse,
-      }),
-    },
-  };
-  if (ret.stubReadDomain) {
-    ret.stubReadDomain.restore();
-  }
-  ret.stubReadDomain = sinon.stub(rd.default, 'readDomain');
-  ret.stubReadDomain.returns(mockReadDomain);
-  ret.res = {
-    status: () => {
-    },
-    json: () => {
-    },
-  };
-  ret.next = () => {
-  };
-  return ret;
-}
 
 describe('unit', () => {
   describe('api', () => {
@@ -44,10 +16,15 @@ describe('unit', () => {
           let req = null;
           let res = null;
           let next = null;
-          let stubReadDomain = null;
+          const readAccountSignupStub = sinon.stub(ras, 'default');
           let accountName = null;
           before(() => {
             accountName = 'myaccount';
+            next = () => {};
+            res = {
+              json: () => {},
+              status: () => {},
+            };
             req = {
               swagger: {
                 params: {
@@ -59,63 +36,95 @@ describe('unit', () => {
             };
           });
           after(() => {
-            if (stubReadDomain) {
-              stubReadDomain.restore();
+            if (readAccountSignupStub) {
+              readAccountSignupStub.restore();
             }
           });
           it('should return 200 if successful', (done) => {
-            ({ res, next, stubReadDomain } =
-              stubfindOne(
-                stubReadDomain,
-                res,
-                next,
-                (params, cb) => {
-                  cb(null, {
-                    attributes: {
-                      name: accountName,
-                      id: accountName,
-                      status: 'created',
-                    },
-                  });
-                },
-              ));
+            readAccountSignupStub.returns(Promise.resolve({
+              key: accountName,
+              name: accountName,
+              status: 'created',
+            }));
             const mock = sinon.mock(res);
             mock.expects('status').once().withArgs(200);
-            readAccountSignup(req, res, next);
-            mock.verify();
-            done();
+            readAccountSignupRest(req, res, next)
+              .then(() => {
+                mock.verify();
+                done();
+              })
+              .catch((err) => {
+                done(err);
+              });
+          });
+          it('should return accountSignup if successful', (done) => {
+            readAccountSignupStub.returns(Promise.resolve({
+              key: accountName,
+              name: accountName,
+              status: 'created',
+            }));
+            const mock = sinon.mock(res);
+            mock.expects('json').once().withArgs({
+              key: accountName,
+              name: accountName,
+              status: 'created',
+            });
+            readAccountSignupRest(req, res, next)
+              .then(() => {
+                mock.verify();
+                done();
+              })
+              .catch((err) => {
+                done(err);
+              });
           });
           it('should return 500 if repo returns err', (done) => {
-            ({ res, next, stubReadDomain } =
-              stubfindOne(
-                stubReadDomain,
-                res,
-                next,
-                (params, cb) => {
-                  cb('An error', null);
-                },
-              ));
+            readAccountSignupStub.returns(Promise.reject({
+              code: errorCodes.serverError,
+              message: 'Some server error',
+            }));
             const mock = sinon.mock(res);
             mock.expects('status').once().withArgs(500);
-            readAccountSignup(req, res, next);
-            mock.verify();
-            done();
+            readAccountSignupRest(req, res, next)
+              .then(() => {
+                mock.verify();
+                done();
+              })
+              .catch((err) => {
+                done(err);
+              });
           });
           it('should return 404 if repo cannot find signup', (done) => {
-            ({ res, next, stubReadDomain } =
-              stubfindOne(
-                stubReadDomain,
-                res,
-                next,
-                (params, cb) => {
-                  cb(null, null);
-                },
-              ));
+            readAccountSignupStub.returns(Promise.reject({
+              code: errorCodes.notFound,
+              message: 'Cannot find it',
+            }));
             const mock = sinon.mock(res);
             mock.expects('status').once().withArgs(404);
-            readAccountSignup(req, res, next);
-            mock.verify();
-            done();
+            readAccountSignupRest(req, res, next)
+              .then(() => {
+                mock.verify();
+                done();
+              })
+              .catch((err) => {
+                done(err);
+              });
+          });
+          it('should return 400 if key not supplied', (done) => {
+            readAccountSignupStub.returns(Promise.reject({
+              code: errorCodes.badRequest,
+              message: 'No key supplied',
+            }));
+            const mock = sinon.mock(res);
+            mock.expects('status').once().withArgs(400);
+            readAccountSignupRest(req, res, next)
+              .then(() => {
+                mock.verify();
+                done();
+              })
+              .catch((err) => {
+                done(err);
+              });
           });
         });
       });

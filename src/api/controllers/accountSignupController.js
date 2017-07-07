@@ -1,6 +1,7 @@
 import { log } from './../../utilities/logging';
-import cqrsReadDomain from '../../cqrsReadDomain';
 import createAccountSignup from '../mutations/createAccountSignup';
+import readAccountSignup from '../queries/readAccountSignup';
+import errorCodes from '../../utilities/errorCodes';
 
 function createAccountSignupRest(req, res, next) {
   log.info('create accountSignup signup');
@@ -23,37 +24,37 @@ function createAccountSignupRest(req, res, next) {
     });
 }
 
-function readAccountSignup(req, res, next) {
-  log.info('readAccountSignup');
-  const rd = cqrsReadDomain.readDomain();
-  const accountSignupRepo = rd.repository.extend({
-    collectionName: 'accountSignup',
-  });
-
-  accountSignupRepo.findOne({ id: req.swagger.params.key.value }, (err, accountSignup) => {
-    log.info('got readAccountSignup');
-    if (err) {
+function readAccountSignupRest(req, res, next) {
+  return readAccountSignup({ key: req.swagger.params.key.value })
+    .then((accountSignup) => {
+      log.info('success readAccountSignup');
+      res.status(200);
+      const { key, name, status } = accountSignup;
+      res.json({ key, name, status });
+      next();
+    })
+    .catch((err) => {
+      if (err.code && (err.code === errorCodes.notFound)) {
+        log.info(`Account signup not found ${req.swagger.params.key.value}`);
+        res.status(404);
+        res.json(err.message);
+        next();
+        return;
+      }
+      if (err.code && (err.code === errorCodes.badRequest)) {
+        log.info(`Bad request ${err.message}`);
+        res.status(400);
+        res.json(err.message);
+        next();
+        return;
+      }
       log.error(err);
       res.status(500);
-      res.json({ error: 'An error occurred' });
+      res.json(err.message);
       next();
-      return;
-    }
-    if (accountSignup === null) {
-      log.info(`Account signup not found ${req.swagger.params.key.value}`);
-      res.status(404);
-      res.json({ message: 'Account Signup Not found' });
-      next();
-      return;
-    }
-    log.info('success readAccountSignup');
-    res.status(200);
-    const { id: key, name, status } = accountSignup.attributes;
-    res.json({ key, name, status });
-    next();
-  });
+    });
 }
 export {
   createAccountSignupRest,
-  readAccountSignup,
+  readAccountSignupRest,
 };

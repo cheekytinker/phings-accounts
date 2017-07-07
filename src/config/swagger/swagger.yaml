@@ -44,7 +44,7 @@ paths:
     x-swagger-router-controller: accountSignupController
     get:
       description: get accountSignup
-      operationId: readAccountSignup
+      operationId: readAccountSignupRest
       parameters:
         - name: key
           in: path
