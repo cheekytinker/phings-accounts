@@ -59,7 +59,7 @@
 				{
 					"name": "Delay",
 					"request": {
-						"url": "https://echo.getpostman.com/delay/5",
+						"url": "https://echo.getpostman.com/delay/1",
 						"method": "GET",
 						"header": [],
 						"body": {},
@@ -146,7 +146,7 @@
 				{
 					"name": "Delay",
 					"request": {
-						"url": "https://echo.getpostman.com/delay/5",
+						"url": "https://echo.getpostman.com/delay/1",
 						"method": "GET",
 						"header": [],
 						"body": {},

@@ -5,6 +5,7 @@ import shortid from 'shortid';
 import path from 'path';
 import rimraf from 'rimraf';
 import fs from 'fs';
+import sinon from 'sinon';
 import Log, { log } from '../../../../src/utilities/logging';
 import appConfig from '../../../../src/config/application';
 
@@ -16,7 +17,10 @@ describe('unit', () => {
     describe('loggingSpecs', () => {
       describe('when logging', () => {
         let testLogFolderPath = null;
+        const sandbox = sinon.sandbox.create();
+        const logLevelStub = sandbox.stub(appConfig.app, 'logLevel');
         before((done) => {
+          logLevelStub.returns('info');
           testLogFolderPath = path.join(
             appConfig.app.logDir,
             shortid.generate(),
@@ -24,6 +28,7 @@ describe('unit', () => {
           done();
         });
         after((done) => {
+          sandbox.restore();
           rimraf(path.dirname(testLogFolderPath), () => {
             done();
           });
@@ -59,8 +64,8 @@ describe('unit', () => {
             });
           });
         });
-        it('should be able to log a info', (done) => {
-          const myLog = new Log(testLogFolderPath);
+        it('should be able to configure to log info', (done) => {
+          const myLog = new Log(testLogFolderPath, 'info');
           myLog.info('my info');
           fs.exists(testLogFolderPath, () => {
             fs.readFile(testLogFolderPath, 'utf8', (err, data) => {
