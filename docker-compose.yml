@@ -13,7 +13,7 @@ services:
       - "15672:15672"
       - "5672:5672"
   search:
-    image: elasticsearch
+    image: cheekytinker/search
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -28,6 +28,8 @@ services:
     volumes:
       - graphdatavolume:/data
       - graphlogsvolume:/logs
+    environment:
+      NEO4J_AUTH: "none"
 volumes:
   mongovolume:
   graphdatavolume:

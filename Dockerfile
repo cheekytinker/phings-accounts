@@ -15,4 +15,4 @@ RUN $HOME/.yarn/bin/yarn install
 
 # inof only, not actually exposing anything with this
 EXPOSE 10010 4000
-CMD [ "yarn", "dockerstart" ]
+CMD [ "apt yarn", "dockerstart" ]

@@ -6,6 +6,7 @@ machine:
     - mongod
     - elasticsearch
     - rabbitmq-server
+    - neo4j
   hosts:
     mongo: 127.0.0.1
   environment:

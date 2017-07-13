@@ -11,6 +11,8 @@ const config = {
     mongoRepository: process.env.PHINGS_ACCOUNTS_REPOSITORY || 'phings-accounts',
     amqpHost: process.env.PHINGS_AMQP_HOST || 'amqp://localhost:5672',
     defaultQueue: 'phings-accounts',
+    searchHost: process.env.SEARCH_HOST || 'localhost:9200',
+    graphDbHost: process.env.GRAPH_DB_HOST || 'http://localhost:7474',
   },
 };
 
