@@ -11,7 +11,6 @@ const mocha = require('gulp-mocha');
 const clean = require('gulp-clean');
 const istanbul = require('gulp-istanbul');
 const isparta = require('isparta');
-const runsequence = require('run-sequence');
 
 const testFiles = 'test/**/*.js';
 const srcFiles = 'src/**/*.js';
@@ -30,7 +29,7 @@ gulp.task('transpileSource', ['copyyaml'], () => {
     }))
     .pipe(sourcemaps.init())
     .pipe(babel({
-      presets: ['es2015'],
+      presets: ['latest-minimal'],
     }))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('./build/src/'));
@@ -38,7 +37,7 @@ gulp.task('transpileSource', ['copyyaml'], () => {
 
 gulp.task('runtests', ['transpileSource'], () => {
   return gulp.src([testFiles])
-    .pipe(babel({presets: ['es2015']}))
+    .pipe(babel({presets: ['latest-minimal']}))
     .pipe(gulp.dest('./build/test/'))
     .pipe(mocha());
 });

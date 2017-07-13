@@ -6,7 +6,7 @@
   "readme": "README.md",
   "babel": {
     "presets": [
-      "es2015"
+      "latest-minimal"
     ],
     "env": {
       "test": {
