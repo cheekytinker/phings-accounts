@@ -12,7 +12,7 @@ chai.use(dirtyChai);
 describe('unit', () => {
   describe('api', () => {
     describe('queries', () => {
-      describe('readAccountSignupRest', () => {
+      describe('readAccountSignup', () => {
         describe('when reading successfully', () => {
           const repo = {
             findOne: (opt, cb) => {
