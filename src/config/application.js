@@ -4,6 +4,8 @@ const config = {
     version: process.env.APPLICATION_VERSION || '0.1.0',
     logDir: process.env.APPLICATION_LOG_DIR || './log',
     logLevel: process.env.APPLICATION_LOG_LEVEL || 'warn',
+    restPort: process.env.REST_PORT || '10010',
+    graphQlPort: process.env.GRAPHQL_PORT || '4000',
     dbHost: process.env.DB_HOST || 'localhost',
     readDbHost: process.env.READ_DB_HOST || 'localhost',
     readDbPort: process.env.READ_DB_PORT || '27017',

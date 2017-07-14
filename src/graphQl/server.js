@@ -3,6 +3,7 @@ import graphqlHttp from 'express-graphql';
 import { log } from '../utilities/logging';
 import '../utilities/initialiseExternalServices';
 import schema from '../api/graphQlSchemas/accountSignup';
+import config from '../config/application';
 import readAccountSignup from '../api/queries/readAccountSignup';
 import createAccountSignup from '../api/mutations/createAccountSignup';
 
@@ -18,7 +19,17 @@ function start() {
     rootValue: root,
     graphiql: true,
   }));
-  app.listen(4000, () => log.info('Now browse to localhost:4000/graphql'));
+  return new Promise((resolve, reject) => {
+    try {
+      app.listen(config.app.graphQlPort, () => {
+        log.info(`GraphQl on localhost:${config.app.graphQlPort}/graphql`);
+        resolve(app);
+      });
+    } catch (err) /* istanbul ignore next */ {
+      log.error(err);
+      reject(err);
+    }
+  });
 }
 
 module.exports = {

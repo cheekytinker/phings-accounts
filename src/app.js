@@ -17,22 +17,31 @@ const server = restify.createServer({
   version: appConfig.app.version,
 });
 
+function startListening() {
+  return new Promise((resolve, reject) => {
+    try {
+      server.listen(appConfig.app.restPort, () => {
+        log.info(`Listening on port ${appConfig.app.restPort}`);
+        resolve();
+      });
+    } catch (err) /* istanbul ignore next */ {
+      log.error(err);
+      reject(err);
+    }
+  });
+}
+
 //  err, repository - how to use this repository
-function startRestServer(swaggerRestify) {
+async function startRestServer(swaggerRestify) {
   log.info('Restify started');
   swaggerRestify.register(server);
-
   /* istanbul ignore next */
   server.use((errX, req, res, next) => {
     log.error(errX.stack);
     res.status(500).send('Something broke!');
     next();
   });
-  const port = process.env.PORT || 10010;
-  graphQlServerStart();
-  server.listen(port, () => {
-    log.info(`Listening on port ${port}`);
-  });
+
   /* istanbul ignore next */
   server.on('InternalServer', (req, res, intErr, cb) => cb());
   /* istanbul ignore next */
@@ -43,7 +52,8 @@ function startRestServer(swaggerRestify) {
   process.on('uncaughtException', (procErr) => {
     log.info(`Uncaught process exception ${procErr}`);
   });
-  return Promise.resolve();
+  await graphQlServerStart();
+  await startListening();
 }
 
 let cb = null;
@@ -98,7 +108,7 @@ function regsiterReadDomainEvents() {
    */
 }
 
-function swaggerRestifyCreate() {
+async function swaggerRestifyCreate() {
   log.info('Starting swaggerRestifyCreate');
   const swaggerConfig = {
     appRoot: __dirname,
@@ -118,10 +128,10 @@ function swaggerRestifyCreate() {
   });
 }
 
-function startCommandDomain(readDomainInst) {
+async function startCommandDomain(readDomainInst) {
   reset();
   const dom = domain();
-  return new Promise((resolve, reject) => {
+  await new Promise((resolve, reject) => {
     dom.init((err, warnings) => {
       /* istanbul ignore next */
       if (err) {
@@ -138,49 +148,44 @@ function startCommandDomain(readDomainInst) {
       started = true;
       resolve();
     });
-  })
-  .then(() => {
-    log.info('Call restify create');
-    return swaggerRestifyCreate();
-  })
-  .then((swaggerRestify) => {
-    log.info('About to start rest server');
-    return startRestServer(swaggerRestify);
   });
+  log.info('Call restify create');
+  const swaggerRestify = await swaggerRestifyCreate();
+  log.info('About to start rest server');
+  await startRestServer(swaggerRestify);
 }
 
-function startServer() {
-  /* istanbul ignore next */
-  if (started) {
-    log.info('Server already started');
-    return Promise.resolve();
-  }
-  log.info('starting');
-  const viewModelRead = promisify(viewmodel.read);
-  let readDomainInst = null;
-  return viewModelRead(config.repository)
-      .then(() => {
-        readDomainInst = cqrsReadDomain.readDomain();
-        regsiterReadDomainEvents();
-        return new Promise((resolve, reject) => {
-          try {
-            readDomainInst.init(() => {
-              resolve();
-            });
-          } catch (err) {
-            /* istanbul ignore next */
-            reject(err);
-          }
-        });
-      })
-      .then((warnings) => {
+async function initReadDomain() {
+  return new Promise((resolve, reject) => {
+    try {
+      const readDomainInst = cqrsReadDomain.readDomain();
+      regsiterReadDomainEvents();
+      readDomainInst.init((warnings) => {
         /* istanbul ignore next */
         if (warnings) {
           log.error(`Warnings ${warnings}`);
-          return Promise.reject('Cqrs Read Domain failed to start');
+          reject('Cqrs Read Domain failed to start');
         }
-        return startCommandDomain(readDomainInst);
+        resolve(readDomainInst);
       });
+    } catch (err) {
+      /* istanbul ignore next */
+      reject(err);
+    }
+  });
+}
+
+async function startServer() {
+  /* istanbul ignore next */
+  if (started) {
+    log.info('Server already started');
+    return;
+  }
+  log.info('starting');
+  const viewModelRead = promisify(viewmodel.read);
+  await viewModelRead(config.repository);
+  const readDomainInst = await initReadDomain();
+  await startCommandDomain(readDomainInst);
 }
 
 export default {
