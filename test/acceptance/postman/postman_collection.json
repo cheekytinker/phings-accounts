@@ -50,7 +50,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"query\":\"mutation {\\n  createAccountSignup(input: {name: \\\"{{accountName}}\\\"}) {\\n    name\\n  }\\n}\",\"variables\":null}"
+							"raw": "{\"query\":\"mutation {\\n  createAccountSignup(input: {name: \\\"{{accountName}}\\\", primaryContact: {firstName: \\\"Anthony\\\", lastName: \\\"Hollingsworth\\\", email: \\\"ant@cheekytinker.com\\\", userName: \\\"{{accountName}}Admin\\\", password: \\\"mypass123\\\"}}) {\\n    name\\n  }\\n}\\n\",\"variables\":null}"
 						},
 						"description": ""
 					},
@@ -263,6 +263,11 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "accounts",
+			"description": "",
+			"item": []
 		}
 	]
 }
