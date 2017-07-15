@@ -1,8 +1,17 @@
 import { buildSchema } from 'graphql';
 
 const schema = buildSchema(`
+  input PrimaryContact {
+    userName: String!
+    firstName: String!
+    lastName: String!
+    email: String!
+    password: String!
+  }
+  
   input AccountSignupInput {
       name: String!
+      primaryContact: PrimaryContact!
   }
   type AccountSignup {
     key: String!

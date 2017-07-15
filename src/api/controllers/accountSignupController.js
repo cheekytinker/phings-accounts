@@ -5,7 +5,9 @@ import errorCodes from '../../utilities/errorCodes';
 
 function createAccountSignupRest(req, res, next) {
   log.info('create accountSignup signup');
-  return createAccountSignup({ input: { name: req.body.name } })
+  return createAccountSignup({
+    input: req.body,
+  })
     .then((data) => {
       res.status(201);
       const { name } = data;

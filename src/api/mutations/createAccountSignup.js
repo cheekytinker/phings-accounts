@@ -2,19 +2,17 @@ import uuidv4 from 'uuid';
 import { log } from './../../utilities/logging';
 import { domain } from '../../cqrsDomain';
 
-export default function createAccountSignup({ input: { name: accountName } }) {
+export default function createAccountSignup({ input }) {
   log.info('createAccountSignup');
   return new Promise((resolve, reject) => {
     domain().handle({
       id: uuidv4(),
       name: 'startAccountSignup',
       aggregate: {
-        id: `${accountName}`,
+        id: `${input.name}`,
         name: 'accountSignup',
       },
-      payload: {
-        name: `${accountName}`,
-      },
+      payload: input,
       revision: 0,
       version: 1,
       meta: {
