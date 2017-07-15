@@ -14,15 +14,22 @@ const isparta = require('isparta');
 
 const testFiles = 'test/**/*.js';
 const srcFiles = 'src/**/*.js';
+const jsonFiles = 'src/**/*.json';
 const buildFiles = 'build/**/*.*';
+const yamlFiles = 'src/config/**/*.yaml';
 
-gulp.task('copyyaml', () => {
-  gulp.src('src/config/**/*.yaml')
-    .pipe(gulp.dest('build/src/config/'));
+gulp.task('copyconfig', () => {
+  gulp.src([yamlFiles])
+    .pipe(gulp.dest('build/src/config'));
 });
 
-gulp.task('transpileSource', ['copyyaml'], () => {
-  gulp.src(srcFiles)
+gulp.task('copymisc', ['copyconfig'], () => {
+  gulp.src([jsonFiles])
+    .pipe(gulp.dest('build/src/'));
+});
+
+gulp.task('transpileSource', ['copymisc'], () => {
+  gulp.src([srcFiles])
     .pipe(plumber(function (error) {
       console.log('Error transpiling', error.message);
       this.emit('end');
@@ -43,7 +50,7 @@ gulp.task('runtests', ['transpileSource'], () => {
 });
 
 gulp.task('watchSource', ['transpileSource'], () => {
-  gulp.watch(srcFiles, ['transpileSource']);
+  gulp.watch([srcFiles,jsonFiles,yamlFiles], ['transpileSource']);
 });
 
 gulp.task('cleanbuildfiles', () => {

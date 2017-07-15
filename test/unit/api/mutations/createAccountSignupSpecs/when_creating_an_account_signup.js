@@ -67,7 +67,11 @@ describe('unit', () => {
                 name: 'myAccount',
               },
             }).catch((ret) => {
-              expect(ret).deep.equal('Error: "fake error details"');
+              expect(ret).deep.equal({
+                name: 'A fake error',
+                message: 'fake error details',
+                more: '',
+              });
               done();
             });
           });

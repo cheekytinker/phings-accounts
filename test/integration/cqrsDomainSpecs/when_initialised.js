@@ -1,7 +1,6 @@
 import { describe, it } from 'mocha';
 import chai from 'chai';
 import dirtyChai from 'dirty-chai';
-import '../../../src/utilities/initialiseExternalServices';
 import { domain, reset } from '../../../src/cqrsDomain';
 
 chai.use(dirtyChai);

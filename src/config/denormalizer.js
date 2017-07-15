@@ -1,7 +1,9 @@
+import path from 'path';
 import appConfig from './application';
 
+const thePath = path.join(__dirname, '../readDomain');
 const config = {
-  denormalizerPath: `${__dirname}/../readDomain`,
+  denormalizerPath: thePath,
   repository: {
     type: 'mongodb',
     host: appConfig.app.readDbHost,

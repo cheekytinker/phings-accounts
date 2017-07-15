@@ -20,11 +20,17 @@ function commandHandler(message) {
   });
 }
 
+function clearSubscriptions() {
+  evtSubscriptions.length = 0;
+  cmdSubscriptions.length = 0;
+}
+
 export default {
-  clearSubscriptions: () => {
-    evtSubscriptions.length = 0;
-    cmdSubscriptions.length = 0;
+  reset: () => {
+    clearSubscriptions();
+    servicebus.reset();
   },
+  clearSubscriptions,
   emitCommand: (command) => {
     log.info(command);
     servicebus.bus().publish('command', JSON.stringify(command));

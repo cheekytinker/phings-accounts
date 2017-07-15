@@ -1,10 +1,10 @@
+import path from 'path';
 import restify from 'restify';
 import SwaggerRestify from 'swagger-restify-mw';
 import viewmodel from 'viewmodel';
 import promisify from 'es6-promisify';
 import msgBus from './mbusDomain';
 import { log } from './utilities/logging';
-import './utilities/initialiseExternalServices';
 import appConfig from './config/application';
 import config from './config/denormalizer';
 import { domain, reset } from './cqrsDomain';
@@ -12,15 +12,35 @@ import cqrsReadDomain from './cqrsReadDomain';
 import { graphQlServerStart } from './graphQl/server';
 
 let started = false;
-const server = restify.createServer({
-  name: appConfig.app.name,
-  version: appConfig.app.version,
-});
+let graphServer = null;
+let server = null;
+
+function restServer() {
+  if (server) {
+    return server;
+  }
+  server = restify.createServer({
+    name: appConfig.app.name,
+    version: appConfig.app.version,
+  });
+  return server;
+}
+
+function closeServers() {
+  if (server) {
+    server.close();
+    server = null;
+  }
+  if (graphServer) {
+    graphServer.close();
+    graphServer = null;
+  }
+}
 
 function startListening() {
   return new Promise((resolve, reject) => {
     try {
-      server.listen(appConfig.app.restPort, () => {
+      restServer().listen(appConfig.app.restPort, () => {
         log.info(`Listening on port ${appConfig.app.restPort}`);
         resolve();
       });
@@ -34,7 +54,7 @@ function startListening() {
 //  err, repository - how to use this repository
 async function startRestServer(swaggerRestify) {
   log.info('Restify started');
-  swaggerRestify.register(server);
+  swaggerRestify.register(restServer());
   /* istanbul ignore next */
   server.use((errX, req, res, next) => {
     log.error(errX.stack);
@@ -43,16 +63,16 @@ async function startRestServer(swaggerRestify) {
   });
 
   /* istanbul ignore next */
-  server.on('InternalServer', (req, res, intErr, cb) => cb());
+  restServer().on('InternalServer', (req, res, intErr, cb) => cb());
   /* istanbul ignore next */
-  server.on('uncaughtException', (serverErr) => {
+  restServer().on('uncaughtException', (serverErr) => {
     log.info(`Uncaught server exception ${serverErr}`);
   });
   /* istanbul ignore next */
   process.on('uncaughtException', (procErr) => {
     log.info(`Uncaught process exception ${procErr}`);
   });
-  await graphQlServerStart();
+  graphServer = await graphQlServerStart();
   await startListening();
 }
 
@@ -61,6 +81,7 @@ let cb = null;
 function setupDomainHandlers(dom, readDomainInst) {
   const domainInfo = dom.getInfo();
   log.info(`Domain Info ${domainInfo}`);
+  msgBus.reset();
   /* istanbul ignore next */
   msgBus.onEvent((evt) => {
     log.info(`bus raised event ${evt.name}`);
@@ -110,9 +131,10 @@ function regsiterReadDomainEvents() {
 
 async function swaggerRestifyCreate() {
   log.info('Starting swaggerRestifyCreate');
+  const swaggerPath = path.join(__dirname, 'config/swagger/swagger.yaml');
   const swaggerConfig = {
     appRoot: __dirname,
-    swaggerFile: `${__dirname}/config/swagger/swagger.yaml`,
+    swaggerFile: `${swaggerPath}`,
   };
   log.info(config);
   return new Promise((resolve, reject) => {
@@ -158,6 +180,7 @@ async function startCommandDomain(readDomainInst) {
 async function initReadDomain() {
   return new Promise((resolve, reject) => {
     try {
+      cqrsReadDomain.reset();
       const readDomainInst = cqrsReadDomain.readDomain();
       regsiterReadDomainEvents();
       readDomainInst.init((warnings) => {
@@ -182,6 +205,7 @@ async function startServer() {
     return;
   }
   log.info('starting');
+  closeServers();
   const viewModelRead = promisify(viewmodel.read);
   await viewModelRead(config.repository);
   const readDomainInst = await initReadDomain();
@@ -189,9 +213,14 @@ async function startServer() {
 }
 
 export default {
-  server,
+  server: restServer,
   start: (callback) => {
     cb = callback;
+    return startServer();
+  },
+  restart: (callback) => {
+    cb = callback;
+    started = false;
     return startServer();
   },
 };

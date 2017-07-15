@@ -1,3 +1,4 @@
+import path from 'path';
 import { domain } from './domainWrapper';
 import { log } from './utilities/logging';
 import appConfig from './config/application';
@@ -9,9 +10,11 @@ const createDomain = () => {
     log.info('cqrsDomain already exists');
     return singleDomain;
   }
-  log.info(`cqrsDomain ${__dirname}/domain`);
+  log.info('cqrsDomain creating');
+  const thePath = path.join(__dirname, 'domain');
+  log.info(`cqrsDomain ${thePath}`);
   singleDomain = domain({
-    domainPath: `${__dirname}/domain`,
+    domainPath: `${thePath}`,
     eventStore: {
       type: 'mongodb',
       host: appConfig.app.dbHost,                          // optional

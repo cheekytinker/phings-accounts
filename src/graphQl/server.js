@@ -1,7 +1,6 @@
 import express from 'express';
 import graphqlHttp from 'express-graphql';
 import { log } from '../utilities/logging';
-import '../utilities/initialiseExternalServices';
 import schema from '../api/graphQlSchemas/accountSignup';
 import config from '../config/application';
 import readAccountSignup from '../api/queries/readAccountSignup';
@@ -12,18 +11,20 @@ const root = {
   createAccountSignup,
 };
 
+let server = null;
+
 function start() {
-  const app = express();
-  app.use('/graphql', graphqlHttp({
+  server = express();
+  server.use('/graphql', graphqlHttp({
     schema,
     rootValue: root,
     graphiql: true,
   }));
   return new Promise((resolve, reject) => {
     try {
-      app.listen(config.app.graphQlPort, () => {
+      const graphServer = server.listen(config.app.graphQlPort, () => {
         log.info(`GraphQl on localhost:${config.app.graphQlPort}/graphql`);
-        resolve(app);
+        resolve(graphServer);
       });
     } catch (err) /* istanbul ignore next */ {
       log.error(err);

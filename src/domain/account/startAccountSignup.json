@@ -27,5 +27,5 @@
       "required": ["name"]
     }
   },
-  "required": ["id", "command", "payload"]
+  "required": ["id", "payload"]
 }
