@@ -46,6 +46,7 @@
     "bunyan-console-stream": "^0.1.0",
     "cqrs-domain": "^2.5.8",
     "cqrs-eventdenormalizer": "^1.10.1",
+    "cqrs-saga": "^1.7.3",
     "debug": "^2.6.6",
     "elasticsearch": "^13.2.0",
     "es6-promisify": "https://registry.npmjs.org/es6-promisify/-/es6-promisify-5.0.0.tgz",

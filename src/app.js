@@ -7,7 +7,8 @@ import msgBus from './mbusDomain';
 import { log } from './utilities/logging';
 import appConfig from './config/application';
 import config from './config/denormalizer';
-import { domain, reset } from './cqrsDomain';
+import { domain as cqrsDomain, reset as cqrsReset } from './cqrsDomain';
+import { domain as cqrsSagaDomain, reset as cqrsSagaReset } from './cqrsSagaDomain';
 import cqrsReadDomain from './cqrsReadDomain';
 import { graphQlServerStart } from './graphQl/server';
 
@@ -61,7 +62,6 @@ async function startRestServer(swaggerRestify) {
     res.status(500).send('Something broke!');
     next();
   });
-
   /* istanbul ignore next */
   restServer().on('InternalServer', (req, res, intErr, cb) => cb());
   /* istanbul ignore next */
@@ -72,61 +72,90 @@ async function startRestServer(swaggerRestify) {
   process.on('uncaughtException', (procErr) => {
     log.info(`Uncaught process exception ${procErr}`);
   });
-  graphServer = await graphQlServerStart();
   await startListening();
 }
 
 let cb = null;
 
-function setupDomainHandlers(dom, readDomainInst) {
-  const domainInfo = dom.getInfo();
-  log.info(`Domain Info ${domainInfo}`);
-  msgBus.reset();
+function setupSagaDomainHandlers(sagaDomainInst) {
+  const domainInfo = JSON.stringify(sagaDomainInst.getInfo());
+  log.info(`Saga Domain Info ${domainInfo}`);
   /* istanbul ignore next */
-  msgBus.onEvent((evt) => {
-    log.info(`bus raised event ${evt.name}`);
-    readDomainInst.handle(evt);
-    if (cb) {
-      cb(evt);
-    }
-  });
-  /* istanbul ignore next */
-  msgBus.onCommand((cmd) => {
-    log.info(`received command ${cmd.name}`);
-    dom.handle(cmd);
+  sagaDomainInst.onCommand((cmd) => {
+    log.info(`saga domain issued command ${cmd.name}`);
+    msgBus.emitCommand(cmd);
     if (cb) {
       cb(cmd);
     }
   });
   /* istanbul ignore next */
-  dom.onEvent((event) => {
+  sagaDomainInst.onEventMissing((evt) => {
+    log.info(`unhandled saga domain evt ${evt.name}`);
+  });
+  msgBus.onEvent((event) => {
+    log.info(`bus raised event for saga ${JSON.stringify(event)}`);
+    sagaDomainInst.handle(event, (err) => {
+      if (err) {
+        throw new Error(err);
+      }
+    });
+    if (cb) {
+      cb(event);
+    }
+  });
+}
+
+function setupCqrsDomainHandlers(domainInst) {
+  const domainInfo = domainInst.getInfo();
+  log.info(`Domain Info ${domainInfo}`);
+  /* istanbul ignore next */
+  msgBus.onCommand((cmd) => {
+    log.info(`domain received command from bus ${cmd.name}`);
+    domainInst.handle(cmd);
+    if (cb) {
+      cb(cmd);
+    }
+  });
+  /* istanbul ignore next */
+  domainInst.onEvent((event) => {
     log.info(`domain raised event ${event.name}`);
     msgBus.emitEvent(event);
     if (cb) {
       cb(event);
     }
   });
-  const info = dom.getInfo();
-  log.info(info);
 }
 
-function regsiterReadDomainEvents() {
-  /*
-   readDomainInst.onEvent((evnt) => {
-   log.info(`read domain received event ${evnt.name}`);
-   //  let the client know the view has changed - sockets
-   //  msgBus.emitEvent(evnt);
-   });
+function setupReadDomainHandlers(readDomainInst) {
+  const domainInfo = readDomainInst.getInfo();
+  log.info(`Read Domain Info ${domainInfo}`);
+  /* istanbul ignore next */
+  msgBus.onEvent((evt) => {
+    log.info(`read domain received event from bus ${evt.name}`);
+    readDomainInst.handle(evt);
+    if (cb) {
+      cb(evt);
+    }
+  });
+  /* istanbul ignore next */
+  readDomainInst.onNotification((not) => {
+    log.info(`read domain emitted notification ${not.name}`);
+    msgBus.emitNotification(not);
+    if (cb) {
+      cb(not);
+    }
+  });
+  /* istanbul ignore next */
+  readDomainInst.onEventMissing((evt) => {
+    log.info(`read domain missing event ${evt}`);
+  });
+}
 
-   readDomainInst.onNotification((not) => {
-   log.info(`read domain emitted notification ${not}`);
-   //  msgBus.emitNotification(not);
-   });
-
-   readDomainInst.onEventMissing((evnt) => {
-   log.info(`read domain missing event ${evnt}`);
-   });
-   */
+function setupDomainHandlers(dom, readDomainInst, sagaDom) {
+  msgBus.reset();
+  setupCqrsDomainHandlers(dom);
+  setupReadDomainHandlers(readDomainInst);
+  setupSagaDomainHandlers(sagaDom);
 }
 
 async function swaggerRestifyCreate() {
@@ -150,10 +179,30 @@ async function swaggerRestifyCreate() {
   });
 }
 
-async function startCommandDomain(readDomainInst) {
-  reset();
-  const dom = domain();
-  await new Promise((resolve, reject) => {
+async function startSagaDomain() {
+  cqrsSagaReset();
+  const sagaDom = cqrsSagaDomain();
+  return new Promise((resolve, reject) => {
+    sagaDom.init((err, warnings) => {
+      /* istanbul ignore next */
+      if (err) {
+        log.error(`Cqrs Saga Domain failed to start ${err}`);
+        reject(`Cqrs Saga Domain failed to start ${err}`);
+      }
+      /* istanbul ignore next */
+      if (warnings) {
+        log.error(`Cqrs Saga Domain warnings on start ${warnings}`);
+        reject(`Cqrs Saga Domain warnings on start ${warnings}`);
+      }
+      resolve(sagaDom);
+    });
+  });
+}
+
+async function startCommandDomain() {
+  cqrsReset();
+  const dom = cqrsDomain();
+  return new Promise((resolve, reject) => {
     dom.init((err, warnings) => {
       /* istanbul ignore next */
       if (err) {
@@ -165,16 +214,9 @@ async function startCommandDomain(readDomainInst) {
         log.error(`Cqrs Domain warnings on start ${warnings}`);
         reject(`Cqrs Domain warnings on start ${warnings}`);
       }
-      log.info('Setup domain handlers');
-      setupDomainHandlers(dom, readDomainInst);
-      started = true;
-      resolve();
+      resolve(dom);
     });
   });
-  log.info('Call restify create');
-  const swaggerRestify = await swaggerRestifyCreate();
-  log.info('About to start rest server');
-  await startRestServer(swaggerRestify);
 }
 
 async function initReadDomain() {
@@ -182,7 +224,6 @@ async function initReadDomain() {
     try {
       cqrsReadDomain.reset();
       const readDomainInst = cqrsReadDomain.readDomain();
-      regsiterReadDomainEvents();
       readDomainInst.init((warnings) => {
         /* istanbul ignore next */
         if (warnings) {
@@ -198,18 +239,30 @@ async function initReadDomain() {
   });
 }
 
+async function startRestWebServer() {
+  log.info('Call restify create');
+  const swaggerRestify = await swaggerRestifyCreate();
+  log.info('About to start rest server');
+  await startRestServer(swaggerRestify);
+}
+
 async function startServer() {
   /* istanbul ignore next */
   if (started) {
     log.info('Server already started');
     return;
   }
-  log.info('starting');
+  log.info('App Starting');
   closeServers();
   const viewModelRead = promisify(viewmodel.read);
   await viewModelRead(config.repository);
   const readDomainInst = await initReadDomain();
-  await startCommandDomain(readDomainInst);
+  const commandDomainInst = await startCommandDomain();
+  const sagaDomainInst = await startSagaDomain();
+  setupDomainHandlers(commandDomainInst, readDomainInst, sagaDomainInst);
+  await startRestWebServer();
+  graphServer = await graphQlServerStart();
+  started = true;
 }
 
 export default {

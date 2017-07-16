@@ -10,7 +10,7 @@ export default function createAccountSignup({ input }) {
       name: 'startAccountSignup',
       aggregate: {
         id: `${input.name}`,
-        name: 'accountSignup',
+        name: 'account',
       },
       payload: input,
       revision: 0,
@@ -20,7 +20,7 @@ export default function createAccountSignup({ input }) {
       },
     }, (err, events, aggregateData) => {
       if (err) {
-        log.info(`Error: ${err.name} : ${err.message} : ${err.more}`);
+        log.error(`Error: ${err.name} : ${err.message} : ${err.more}`);
         reject(err);
         return;
       }

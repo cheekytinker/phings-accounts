@@ -3,7 +3,7 @@ import { log } from './../../utilities/logging';
 
 module.exports = denormalizer.defineViewBuilder({
   name: 'accountSignupStarted',
-  aggregate: 'accountSignup',
+  aggregate: 'account',
   version: 0,
   id: 'aggregate.id',
   autoCreate: true,

@@ -15,6 +15,9 @@ const config = {
     defaultQueue: 'phings-accounts',
     searchHost: process.env.SEARCH_HOST || 'localhost:9200',
     graphDbHost: process.env.GRAPH_DB_HOST || 'http://localhost:7474',
+    sagaDbHost: process.env.SAGA_DB_HOST || 'localhost',
+    sagaDbPort: process.env.SAGA_DB_PORT || '27017',
+    sagaDbName: process.env.SAGA_DB_NAME || 'phings-accounts-saga',
   },
 };
 

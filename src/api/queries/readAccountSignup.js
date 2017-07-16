@@ -10,6 +10,7 @@ export default function readAccountSignup({ key: keyToFind }) {
   log.info('readAccountSignup');
   return new Promise((resolve, reject) => {
     if (!keyToFind) {
+      log.info('No key supplied');
       return reject({
         code: errorCodes.badRequest,
         message: 'No key supplied',
