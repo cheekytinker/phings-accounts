@@ -2,14 +2,14 @@ import uuidv4 from 'uuid';
 import { log } from './../../utilities/logging';
 import { domain } from '../../cqrsDomain';
 
-export default function createAccountSignup({ input }) {
-  log.info('createAccountSignup');
+export default function verifyAccountSignup({ input }) {
+  log.info('verifyAccountSignup');
   return new Promise((resolve, reject) => {
     domain().handle({
       id: uuidv4(),
-      name: 'createAccount',
+      name: 'submitAccountEmailVerificationCode',
       aggregate: {
-        id: `${input.name}`,
+        id: `${input.key}`,
         name: 'account',
       },
       payload: input,

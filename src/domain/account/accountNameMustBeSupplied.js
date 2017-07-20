@@ -2,7 +2,7 @@ import domain from 'cqrs-domain';
 import { log } from '../../utilities/logging';
 
 module.exports = domain.definePreLoadCondition({
-  name: 'startAccountSignup',
+  name: 'createAccount',
   payload: 'payload',
   priority: 1,
 }, (data, callback) => {

@@ -2,7 +2,7 @@ import { describe, it } from 'mocha';
 import chai from 'chai';
 import dirtyChai from 'dirty-chai';
 import sinon from 'sinon';
-import * as vb from '../../../../../src/readDomain/accountSignup/accountSignupStarted';
+import * as vb from '../../../../../src/readDomain/accountSignup/accountCreated';
 
 chai.use(dirtyChai);
 

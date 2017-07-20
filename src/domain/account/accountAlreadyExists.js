@@ -5,7 +5,7 @@ module.exports = domain.defineBusinessRule({
   name: 'accountAlreadyExists',
 }, (changed, previous, events, command) => {
   log.info('Running Rule: accountAlreadyExists');
-  if (previous.get('status') !== undefined && command.name === 'startAccountSignup') {
+  if (previous.get('status') !== undefined && command.name === 'createAccount') {
     log.info('Rule Failed: accountAlreadyExists');
     throw new Error('Account already exists');
   }

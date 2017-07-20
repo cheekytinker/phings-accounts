@@ -1,6 +1,6 @@
 import denormalizer from 'cqrs-eventdenormalizer';
 
 module.exports = denormalizer.defineCollection({
-  name: 'accountSignup',
+  name: 'account',
   defaultPayload: 'payload',
 });

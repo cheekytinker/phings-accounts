@@ -1,0 +1,24 @@
+{
+  "title": "sendAccountVerificationEmail",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "aggregate": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": ["name", "id"]
+    },
+    "payload": {
+    }
+  },
+  "required": ["id", "aggregate", "payload"]
+}

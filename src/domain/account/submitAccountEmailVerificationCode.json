@@ -1,0 +1,31 @@
+{
+  "title": "verifyAccountEmail",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "aggregate": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": ["name", "id"]
+    },
+    "payload": {
+      "type": "object",
+      "properties": {
+        "verificationCode": {
+          "type": "string"
+        }
+      },
+      "required": ["verificationCode"]
+    }
+  },
+  "required": ["id", "aggregate", "payload"]
+}

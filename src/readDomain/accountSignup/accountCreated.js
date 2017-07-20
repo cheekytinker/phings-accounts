@@ -2,7 +2,7 @@ import denormalizer from 'cqrs-eventdenormalizer';
 import { log } from './../../utilities/logging';
 
 module.exports = denormalizer.defineViewBuilder({
-  name: 'accountSignupStarted',
+  name: 'accountCreated',
   aggregate: 'account',
   version: 0,
   id: 'aggregate.id',
@@ -10,7 +10,7 @@ module.exports = denormalizer.defineViewBuilder({
   payload: 'payload',
   priority: 1,
 }, (data, vm) => {
-  log.info(`ReadDomain AccountSignupStarted ${data}`);
+  log.info(`ReadDomain AccountCreated ${data}`);
   vm.set('name', data.name);
   vm.set('status', data.status);
 });

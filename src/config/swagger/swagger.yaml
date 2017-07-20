@@ -1,6 +1,6 @@
 swagger: "2.0"
 info:
-  version: "0.0.1"
+  version: "0.0.2"
   title: phings-accounts
 # during dev, should point to your local machine
 host: localhost:10010
@@ -20,14 +20,13 @@ produces:
 paths:
   /accountSignups:
     x-swagger-router-controller: accountSignupController
-    
     post:
-      description: create an accountSignup for use in the api
+      description: signup for an account
       operationId: createAccountSignupRest
       parameters:
         - name: accountSignup
           in: body
-          description: basic accountSignup signup information
+          description: basic account signup information
           required: true
           schema:
             $ref: "#/definitions/CreateAccountSignupRequest"
@@ -43,7 +42,7 @@ paths:
   /accountSignups/{key}:
     x-swagger-router-controller: accountSignupController
     get:
-      description: get accountSignup
+      description: check the progress of the signup process
       operationId: readAccountSignupRest
       parameters:
         - name: key
@@ -60,6 +59,54 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /accountSignups/{key}/verification/{verificationCode}:
+    x-swagger-router-controller: accountSignupController
+    get:
+      description: GET verb version of verify email to complete the account signup process
+      operationId: friendlyVerifyAccountSignupRest
+      parameters:
+        - name: key
+          in: path
+          type: string
+          description: key of the signup
+          required: true
+        - name: verificationCode
+          in: path
+          type: string
+          description: verification code sent to primary contact email 
+          required: true  
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: "#/definitions/VerifyAccountSignupResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    put:
+      description: verify email for complete the account signup process
+      operationId: verifyAccountSignupRest
+      parameters:
+        - name: key
+          in: path
+          type: string
+          description: key of the signup
+          required: true
+        - name: verificationCode
+          in: path
+          type: string
+          description: verification code sent to primary contact email 
+          required: true  
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: "#/definitions/VerifyAccountSignupResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"          
   /authTokens:
     x-swagger-router-controller: authenticateControllerMethodFactory
     post:
@@ -116,6 +163,10 @@ definitions:
       - firstName
       - lastName
   CreateAccountSignupResponse:
+    properties:
+      key:
+        type: string
+  VerifyAccountSignupResponse:
     properties:
       key:
         type: string

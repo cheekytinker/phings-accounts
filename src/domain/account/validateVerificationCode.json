@@ -1,0 +1,34 @@
+{
+  "title": "validateVerificationCode",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "aggregate": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": ["name", "id"]
+    },
+    "payload": {
+      "type": "object",
+      "properties": {
+        "expectedVerificationCode": {
+          "type": "string"
+        },
+        "submittedVerificationCode": {
+          "type": "string"
+        }
+      },
+      "required": ["expectedVerificationCode", "submittedVerificationCode"]
+    }
+  },
+  "required": ["id", "aggregate", "payload"]
+}

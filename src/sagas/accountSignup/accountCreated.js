@@ -1,16 +1,25 @@
+import shortid from 'shortid';
 import sagaDomain from 'cqrs-saga';
 
 module.exports = sagaDomain.defineSaga({
   containingProperties: ['aggregate.id'],
+  id: 'aggregate.id',
+  existing: false,
 }, (evt, saga, callback) => {
-  saga.set({ accountid: evt.aggregate.id });
+  const verificationCode = shortid.generate();
+  saga.set({
+    accountId: evt.aggregate.id,
+    verificationCode,
+  });
   const cmd = {
     name: 'sendAccountVerificationEmail',
     aggregate: {
       name: 'account',
+      id: evt.aggregate.id,
     },
     payload: {
       transactionId: saga.id,
+      verificationCode,
     },
     meta: evt.meta, //optional
   };

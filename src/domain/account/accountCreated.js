@@ -1,7 +1,7 @@
 import domain from 'cqrs-domain';
 
 module.exports = domain.defineEvent({
-  name: 'accountSignupStarted',
+  name: 'accountCreated',
 }, (data, aggregate) => {
   aggregate.set(data);
 });

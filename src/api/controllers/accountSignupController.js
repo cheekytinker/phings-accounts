@@ -1,5 +1,6 @@
 import { log } from './../../utilities/logging';
 import createAccountSignup from '../mutations/createAccountSignup';
+import verifyAccountSignup from '../mutations/verifyAccountSignup';
 import readAccountSignup from '../queries/readAccountSignup';
 import errorCodes from '../../utilities/errorCodes';
 
@@ -56,7 +57,40 @@ function readAccountSignupRest(req, res, next) {
       next();
     });
 }
+
+function verifyAccountSignupRest(req, res, next) {
+  log.info('verify account signup');
+  return verifyAccountSignup({
+    input: {
+      key: req.swagger.params.key.value,
+      verificationCode: req.swagger.params.verificationCode.value,
+    },
+  })
+    .then((data) => {
+      res.status(200);
+      const { name } = data;
+      res.json({
+        message: `Account signup "${name}" verification submitted`,
+      });
+      next();
+    })
+    .catch((err) => {
+      log.info(`Error: ${err.name} : ${err.message} : ${err.more}`);
+      res.status(400);
+      res.json({
+        message: `Error "${err.message}"`,
+      });
+      next();
+    });
+}
+
+function friendlyVerifyAccountSignupRest(req, res, next) {
+  return verifyAccountSignupRest(req, res, next);
+}
+
 export {
   createAccountSignupRest,
   readAccountSignupRest,
+  verifyAccountSignupRest,
+  friendlyVerifyAccountSignupRest,
 };

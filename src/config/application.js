@@ -4,6 +4,7 @@ const config = {
     version: process.env.APPLICATION_VERSION || '0.1.0',
     logDir: process.env.APPLICATION_LOG_DIR || './log',
     logLevel: process.env.APPLICATION_LOG_LEVEL || 'debug',
+    restHost: process.env.REST_HOST || 'localhost',
     restPort: process.env.REST_PORT || '10010',
     graphQlPort: process.env.GRAPHQL_PORT || '4000',
     dbHost: process.env.DB_HOST || 'localhost',
@@ -18,6 +19,10 @@ const config = {
     sagaDbHost: process.env.SAGA_DB_HOST || 'localhost',
     sagaDbPort: process.env.SAGA_DB_PORT || '27017',
     sagaDbName: process.env.SAGA_DB_NAME || 'phings-accounts-saga',
+  },
+  mailgun: {
+    apiKey: process.env.MAILGUN_API_KEY || 'key-25101ab8baae7cb6c615ad5d776aa7f2',
+    domain: process.env.MAILGUN_DOMAIN || 'sandboxaedc7f48ed604c4ba0ab06201f222606.mailgun.org',
   },
 };
 

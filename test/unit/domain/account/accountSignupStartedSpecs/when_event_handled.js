@@ -2,7 +2,7 @@ import { describe, it } from 'mocha';
 import chai from 'chai';
 import dirtyChai from 'dirty-chai';
 import sinon from 'sinon';
-import * as evt from '../../../../../src/domain/account/accountSignupStarted';
+import * as evt from '../../../../../src/domain/account/accountCreated';
 
 const expect = chai.expect;
 chai.use(dirtyChai);

@@ -1,7 +1,7 @@
 import { describe, it } from 'mocha';
 import chai from 'chai';
 import dirtyChai from 'dirty-chai';
-import * as vb from '../../../../../src/readDomain/accountSignup/accountSignupStarted';
+import * as vb from '../../../../../src/readDomain/accountSignup/accountCreated';
 
 const expect = chai.expect;
 chai.use(dirtyChai);
