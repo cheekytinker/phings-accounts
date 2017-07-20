@@ -1,11 +1,13 @@
 import shortid from 'shortid';
 import sagaDomain from 'cqrs-saga';
+import { log } from '../../utilities/logging';
 
 module.exports = sagaDomain.defineSaga({
   containingProperties: ['aggregate.id'],
   id: 'aggregate.id',
   existing: false,
 }, (evt, saga, callback) => {
+  log.info('account created saga');
   const verificationCode = shortid.generate();
   saga.set({
     accountId: evt.aggregate.id,

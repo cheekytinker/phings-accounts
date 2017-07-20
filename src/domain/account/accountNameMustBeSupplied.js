@@ -4,7 +4,7 @@ import { log } from '../../utilities/logging';
 module.exports = domain.definePreLoadCondition({
   name: 'createAccount',
   payload: 'payload',
-  priority: 1,
+  priority: 2,
 }, (data, callback) => {
   log.info('PreLoad: AccountNameMustBeSupplied');
   if (!data.name || data.name.length < 2) {
