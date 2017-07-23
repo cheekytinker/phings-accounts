@@ -2,7 +2,6 @@ import { log } from './../../utilities/logging';
 import errorCodes from '../../utilities/errorCodes';
 import * as cqrsReadDomain from '../../cqrsReadDomain';
 
-
 export default function readAccountSignup({ key: keyToFind }) {
   const accountSignupRepo = cqrsReadDomain.default.readDomain().repository.extend({
     collectionName: 'accountSignup',
@@ -11,12 +10,14 @@ export default function readAccountSignup({ key: keyToFind }) {
   return new Promise((resolve, reject) => {
     if (!keyToFind) {
       log.info('No key supplied');
-      return reject({
+      reject({
         code: errorCodes.badRequest,
         message: 'No key supplied',
       });
+      return;
     }
-    return accountSignupRepo.findOne({ id: keyToFind }, (err, accountSignup) => {
+    log.info(`find one ${keyToFind}`);
+    accountSignupRepo.findOne({ name: keyToFind }, (err, accountSignup) => {
       log.info('got readAccountSignup');
       if (err) {
         log.error(err);
@@ -35,11 +36,12 @@ export default function readAccountSignup({ key: keyToFind }) {
         return;
       }
       log.info('success readAccountSignup');
-      const { id: key, name, status } = accountSignup.attributes;
+      const { name: key, name, status } = accountSignup.attributes;
       resolve({
         key,
         name,
         status,
+        id: accountSignup.id,
       });
     });
   });

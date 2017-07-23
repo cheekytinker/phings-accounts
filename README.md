@@ -6,16 +6,15 @@ It is using cqrs and event-sourcing patterns
 
 ## Getting Started
 
-
-
 ### Prerequisites
 
 * yarn
 * docker/docker-compose
+* For servicebus-retry
+    * Install Visual Studio Community edition c++
+    * Windows SDK version 8.1 if running on windows
+        * https://developer.microsoft.com/en-us/windows/downloads/windows-8-1-sdk
 
-```
-Give examples
-```
 
 ### Installing
 
@@ -41,9 +40,13 @@ or if you want coverage etc
 
 ## Contributing
 
+Anthony Hollingsworth
+
 ## Versioning
 
 ## Authors
+
+Anthony Hollingsworth
 
 ## License
 

@@ -66,22 +66,22 @@ function verifyAccountSignupRest(req, res, next) {
       verificationCode: req.swagger.params.verificationCode.value,
     },
   })
-    .then((data) => {
-      res.status(200);
-      const { name } = data;
-      res.json({
-        message: `Account signup "${name}" verification submitted`,
-      });
-      next();
-    })
-    .catch((err) => {
-      log.info(`Error: ${err.name} : ${err.message} : ${err.more}`);
-      res.status(400);
-      res.json({
-        message: `Error "${err.message}"`,
-      });
-      next();
+  .then((data) => {
+    res.status(200);
+    const { name } = data;
+    res.json({
+      message: `Account signup "${name}" verification submitted`,
     });
+    next();
+  })
+  .catch((err) => {
+    log.info(`Error: ${err.name} : ${err.message} : ${err.more}`);
+    res.status(400);
+    res.json({
+      message: `Error "${err.message}"`,
+    });
+    next();
+  });
 }
 
 function friendlyVerifyAccountSignupRest(req, res, next) {

@@ -3,7 +3,9 @@ import chai from 'chai';
 import dirtyChai from 'dirty-chai';
 import sinon from 'sinon';
 import * as d from '../../../../../src/cqrsDomain';
-import createAccountSignup from '../../../../../src/api/mutations/createAccountSignup';
+import * as cqrsReadDomain from '../../../../../src/cqrsReadDomain';
+import * as ras from '../../../../../src/api/queries/readAccountSignup';
+import verifyAccountSignup from '../../../../../src/api/mutations/verifyAccountSignup';
 
 const expect = chai.expect;
 chai.use(dirtyChai);
@@ -11,17 +13,29 @@ chai.use(dirtyChai);
 describe('unit', () => {
   describe('api', () => {
     describe('mutations', () => {
-      describe('createAccountSignupSpecs', () => {
-        describe('when creating an accountSignup signup', () => {
+      describe('verifyAccountSignupSpecs', () => {
+        describe('when verifying an accountSignup email', () => {
           let stubHandle = null;
+          let accountSignupRepo = null;
           const accountName = 'myaccount';
-          const accountId = 'myaccount';
+          const accountId = '123456789';
           const sandbox = sinon.sandbox.create();
           beforeEach(() => {
             const dm = {
               handle: () => {},
               getInfo: () => {},
             };
+            accountSignupRepo = {
+              findOne: () => {},
+            };
+            const rd = {
+              repository: {
+                extend: () => accountSignupRepo,
+              },
+            };
+
+            const stubRead = sandbox.stub(cqrsReadDomain.default, 'readDomain');
+            stubRead.returns(rd);
             const stubDomain = sandbox.stub(d.default, 'domain');
             stubDomain.returns(dm);
             stubHandle = sandbox.stub(dm, 'handle');
@@ -30,6 +44,15 @@ describe('unit', () => {
             sandbox.restore();
           });
           it('should return expected fields if successful', (done) => {
+            const stubAccountSignupRepo = sandbox.stub(accountSignupRepo, 'findOne');
+            stubAccountSignupRepo
+              .callsArgWith(1, null, {
+                attributes: {
+                  id: accountId,
+                  name: accountName,
+                  status: 'created',
+                },
+              });
             stubHandle.callsArgWith(
               1,
               null,
@@ -39,9 +62,10 @@ describe('unit', () => {
                 name: accountName,
                 status: 'created',
               });
-            createAccountSignup({
+            verifyAccountSignup({
               input: {
-                name: 'myAccount',
+                key: 'myAccount',
+                verificationCode: '12345',
               },
             }).then((ret) => {
               expect(ret).deep.equal({
@@ -50,9 +74,14 @@ describe('unit', () => {
                 status: 'created',
               });
               done();
+            }).catch((err) => {
+              done(err);
             });
           });
-          it('should error with message if error raised by handled', (done) => {
+          it('should error with message if account does not exist', (done) => {
+            const stubAccountSignupRepo = sandbox.stub(accountSignupRepo, 'findOne');
+            stubAccountSignupRepo
+              .callsArgWith(1, null, null);
             stubHandle.callsArgWith(
               1,
               {
@@ -62,15 +91,14 @@ describe('unit', () => {
               },
               null,
               null);
-            createAccountSignup({
+            verifyAccountSignup({
               input: {
                 name: 'myAccount',
               },
             }).catch((ret) => {
               expect(ret).deep.equal({
-                name: 'A fake error',
-                message: 'fake error details',
-                more: '',
+                code: 400,
+                message: 'No key supplied',
               });
               done();
             });

@@ -12,5 +12,6 @@ module.exports = denormalizer.defineViewBuilder({
 }, (data, vm) => {
   log.info(`ReadDomain AccountCreated ${data}`);
   vm.set('name', data.name);
+  vm.set('primaryContact', data.primaryContact);
   vm.set('status', data.status);
 });

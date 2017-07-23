@@ -1,15 +1,27 @@
 import uuidv4 from 'uuid';
 import { log } from './../../utilities/logging';
 import { domain } from '../../cqrsDomain';
+import readAccountSignup from './../queries/readAccountSignup';
 
-export default function verifyAccountSignup({ input }) {
+async function getAccountSignupId(key) {
+  const accountSignup = await readAccountSignup(key);
+  return accountSignup.id;
+}
+
+async function verifyAccountSignup({ input }) {
   log.info('verifyAccountSignup');
+  let accountId = null;
+  try {
+    accountId = await getAccountSignupId({ key: input.key });
+  } catch (err) {
+    return Promise.reject(err);
+  }
   return new Promise((resolve, reject) => {
     domain().handle({
       id: uuidv4(),
       name: 'submitAccountEmailVerificationCode',
       aggregate: {
-        id: `${input.key}`,
+        id: accountId,
         name: 'account',
       },
       payload: input,
@@ -30,4 +42,6 @@ export default function verifyAccountSignup({ input }) {
     });
   });
 }
+
+export default verifyAccountSignup;
 

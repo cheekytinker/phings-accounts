@@ -7,6 +7,7 @@ machine:
     - elasticsearch
     - rabbitmq-server
     - neo4j
+    - redis
   hosts:
     mongo: 127.0.0.1
   environment:
@@ -26,6 +27,8 @@ test:
     - yarn run cover
     - yarn run checkcover
     - yarn run postman
+    - yarn run cucumber
+    - yarn run cucumberreport
 
   post:
     - mkdir -p $CIRCLE_ARTIFACTS/coverage-report

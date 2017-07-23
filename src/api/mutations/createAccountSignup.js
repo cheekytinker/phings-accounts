@@ -9,7 +9,6 @@ export default function createAccountSignup({ input }) {
       id: uuidv4(),
       name: 'createAccount',
       aggregate: {
-        id: `${input.name}`,
         name: 'account',
       },
       payload: input,
