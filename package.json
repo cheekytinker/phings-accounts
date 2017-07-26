@@ -64,6 +64,8 @@
     "servicebus": "^2.0.10",
     "servicebus-retry": "^0.0.11",
     "shortid": "^2.2.8",
+    "superagent": "^3.5.2",
+    "superagent-promise": "^1.1.0",
     "swagger-restify-mw": "^0.7.0",
     "swagger-tools": "^0.10.1",
     "uuid": "^3.0.1",
@@ -107,7 +109,7 @@
     "run-sequence": "https://registry.npmjs.org/run-sequence/-/run-sequence-1.2.2.tgz",
     "sinon": "^2.1.0",
     "source-map-support": "^0.4.15",
-    "superagent": "^3.5.2",
+
     "supertest": "^3.0.0",
     "supertest-as-promised": "^4.0.2"
   }

@@ -13,7 +13,7 @@ function createAccountSignupRest(req, res, next) {
       res.status(201);
       const { name } = data;
       res.json({
-        message: `Account signup "${name}" created`,
+        message: `Account "${name}" created`,
       });
       next();
     })
@@ -70,7 +70,7 @@ function verifyAccountSignupRest(req, res, next) {
     res.status(200);
     const { name } = data;
     res.json({
-      message: `Account signup "${name}" verification submitted`,
+      message: `Account "${name}" verification submitted`,
     });
     next();
   })

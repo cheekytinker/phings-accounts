@@ -8,6 +8,6 @@ function RestApiWorld() {
 
 defineSupportCode(function ({ setWorldConstructor, setDefaultTimeout }) {
   setWorldConstructor(RestApiWorld);
-  setDefaultTimeout(60 * 1000);
+  setDefaultTimeout(180 * 1000);
 });
 
