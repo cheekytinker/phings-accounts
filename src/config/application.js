@@ -19,6 +19,10 @@ const config = {
     sagaDbHost: process.env.SAGA_DB_HOST || 'localhost',
     sagaDbPort: process.env.SAGA_DB_PORT || '27017',
     sagaDbName: process.env.SAGA_DB_NAME || 'phings-accounts-saga',
+    cacheHost: process.env.CACHE_HOST || 'localhost',
+    cachePort: process.env.CACHE_PORT || '6379',
+    cachePrefix: process.env.CACHE_PREFIX ||
+      `${(process.env.APPLICATION_NAME || 'phings-accounts')}_`,
   },
   mailgun: {
     apiKey: process.env.MAILGUN_API_KEY || 'key-25101ab8baae7cb6c615ad5d776aa7f2',

@@ -1,5 +1,9 @@
 version: '3.3'
 services:
+  cache:
+    image: redis
+    ports:
+      - "6379:6379"
   db:
     image: mongo
     ports:
