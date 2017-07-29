@@ -9,10 +9,10 @@ chai.use(dirtyChai);
 
 describe('unit', () => {
   describe('domain', () => {
-    describe('accountSignup', () => {
+    describe('createAccount', () => {
       describe('when command executed', () => {
-        it('should be named "startAccountSignup"', () => {
-          expect(cmd.name).to.equal('startAccountSignup');
+        it('should be named "createAccount"', () => {
+          expect(cmd.name).to.equal('createAccount');
         });
         it('should set status to be "created"', () => {
           const data = {
@@ -24,7 +24,7 @@ describe('unit', () => {
           cmd.cmdFn(data, agg);
           expect(data.status).to.equal('created');
         });
-        it('should apply "accountSignupStarted" event to aggregate with data', () => {
+        it('should apply "accountCreated" event to aggregate with data', () => {
           const data = {
             name: 'myName',
           };
@@ -34,7 +34,7 @@ describe('unit', () => {
           const expectedEventDataToApply = data;
           expectedEventDataToApply.status = 'created';
           const mockAgg = sinon.mock(agg);
-          const nameOfEventToApply = 'accountSignupStarted';
+          const nameOfEventToApply = 'accountCreated';
           mockAgg.expects('apply').withArgs(nameOfEventToApply, expectedEventDataToApply);
           cmd.cmdFn(data, mockAgg.object);
           mockAgg.verify();

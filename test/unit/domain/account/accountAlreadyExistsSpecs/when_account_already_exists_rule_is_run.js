@@ -2,63 +2,64 @@ import { describe, it, beforeEach, afterEach } from 'mocha';
 import chai from 'chai';
 import dirtyChai from 'dirty-chai';
 import sinon from 'sinon';
-import * as rule from '../../../../../src/domain/account/accountAlreadyExists';
+import errorCodes from '../../../../../src/utilities/errorCodes';
+import * as precon from '../../../../../src/domain/account/accountAlreadyExists';
+import * as ras from '../../../../../src/api/queries/readAccountSignup';
 
 const expect = chai.expect;
 chai.use(dirtyChai);
 
 describe('unit', () => {
   describe('domain', () => {
-    describe('accountSignup', () => {
-      describe('when accountSignup already exists rule is run', () => {
-        const changed = {};
-        const events = {};
-        const previous = {
-          get: () => {},
-        };
+    describe('account', () => {
+      describe('when account already exists preLoadCondition is run', () => {
         const command = {
-          name: 'startAccountSignup',
+          name: 'createAccount',
         };
-        let stubGet = null;
+        let stubRead = null;
+        const sandbox = sinon.sandbox.create();
         beforeEach(() => {
-          stubGet = sinon.stub(previous, 'get');
-          stubGet.withArgs('status').returns(undefined);
+          stubRead = sandbox.stub(ras, 'default');
         });
         afterEach(() => {
-          stubGet.restore();
-          command.name = 'startAccountSignup';
+          sandbox.restore();
+          command.name = 'createAccount';
         });
-        it('should be named accountAlreadyExists', () => {
-          expect(rule.name).is.equal('accountAlreadyExists');
+        it('should be named after the command it applies to', () => {
+          expect(precon.name).is.equal('createAccount');
         });
-        it('should not raise an error if status is undefined', () => {
-          expect(rule.businessRuleFn.bind(
-            rule,
-            changed,
-            previous,
-            events,
-            command)).not.to.throw();
+        it('should not raise an error if account does not exist in readDomain', (done) => {
+          const key = 'myAccountName';
+          stubRead.returns(Promise.reject({
+            code: errorCodes.notFound,
+            message: `Account signup not found for ${key}`,
+          }));
+          const data = {
+            name: key,
+            primaryContact: {
+            },
+          };
+          const callback = (res) => {
+            expect(res).to.be.null();
+            done();
+          };
+          precon.preLoadConditionFn(data, callback);
         });
-        it('should not raise an error if a different command', () => {
-          stubGet.withArgs('status').returns('created');
-          command.name = 'anotherCommand';
-          expect(rule.businessRuleFn.bind(
-            rule,
-            changed,
-            previous,
-            events,
-            command)).not.to.throw();
-        });
-        it('should raise error if command is startAccountSignup and accountSignup already exists', () => {
-          stubGet.restore();
-          stubGet = sinon.stub(previous, 'get');
-          stubGet.withArgs('status').returns('created');
-          expect(rule.businessRuleFn.bind(
-            rule,
-            changed,
-            previous,
-            events,
-            command)).to.throw();
+        it('should raise error if command is createAccount and accountSignup already exists', (done) => {
+          const key = 'myAccountName';
+          stubRead.returns(Promise.resolve({
+            name: key,
+          }));
+          const data = {
+            name: key,
+            primaryContact: {
+            },
+          };
+          const callback = (res) => {
+            expect(res.message).to.equal('Account Already Exists');
+            done();
+          };
+          precon.preLoadConditionFn(data, callback);
         });
       });
     });
