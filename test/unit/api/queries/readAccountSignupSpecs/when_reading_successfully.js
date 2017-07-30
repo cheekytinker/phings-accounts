@@ -20,12 +20,14 @@ describe('unit', () => {
             },
           };
           const repoStub = sinon.stub(repo, 'findOne');
+          const accountName = 'myAccountName';
+          const accountId = '1234546';
           const accountSignup = {
             attributes: {
-              id: 'myAccount',
-              name: 'myAccountName',
+              name: accountName,
               status: 'created',
             },
+            id: accountId,
           };
           const rd = {
             repository: {
@@ -46,9 +48,10 @@ describe('unit', () => {
             ras.default({ key: 'myAccount' })
               .then((entity) => {
                 expect(entity).to.deep.equal({
-                  key: 'myAccount',
-                  name: 'myAccountName',
+                  key: accountName,
+                  name: accountName,
                   status: 'created',
+                  id: accountId,
                 });
                 done();
               });

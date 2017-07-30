@@ -9,13 +9,13 @@ chai.use(dirtyChai);
 describe('unit', () => {
   describe('readDomain', () => {
     describe('accountSignup', () => {
-      describe('accountSignupStartedSpecs', () => {
+      describe('accountCreated', () => {
         describe('when viewbuilder defined', () => {
           it('should have a name that matches the event it applies to', () => {
-            expect(vb.name).to.equal('accountSignupStarted');
+            expect(vb.name).to.equal('accountCreated');
           });
-          it('should have an aggregate that matches the name of the viewmodel', () => {
-            expect(vb.aggregate).to.equal('accountSignup');
+          it('should have an aggregate of account', () => {
+            expect(vb.aggregate).to.equal('account');
           });
           it('should have id of aggregate.id', () => {
             expect(vb.id).to.equal('aggregate.id');

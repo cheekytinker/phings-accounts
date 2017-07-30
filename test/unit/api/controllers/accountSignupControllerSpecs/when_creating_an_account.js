@@ -11,7 +11,7 @@ describe('unit', () => {
   describe('api', () => {
     describe('controllers', () => {
       describe('accountSignupControllerSpecs', () => {
-        describe('when creating an accountSignup signup', () => {
+        describe('when creating an account', () => {
           let req = null;
           let res = null;
           let next = null;
@@ -58,7 +58,7 @@ describe('unit', () => {
                 done(err);
               });
           });
-          it('should set include message in response', (done) => {
+          it('should include message in response', (done) => {
             stubCreateAccountSignup.returns(
               Promise.resolve({
                 id: accountName,
@@ -68,7 +68,7 @@ describe('unit', () => {
             );
             const mock = sandbox.mock(res);
             mock.expects('json').once().withArgs({
-              message: `Account signup "${accountName}" created` });
+              message: `Account "${accountName}" created` });
             createAccountSignupRest(req, res, next)
               .then(() => {
                 mock.verify();

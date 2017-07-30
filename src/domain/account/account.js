@@ -7,5 +7,5 @@ module.exports = [
     defaultEventPayload: 'payload',
     defaultPreConditionPayload: 'payload',
   })
-  .defineSnapshotNeed((loadingTime, events) => events.length >= 5),
+  .defineSnapshotNeed((loadingTime, events) => events.length >= 10),
 ];

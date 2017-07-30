@@ -11,13 +11,14 @@ describe('unit', () => {
   describe('domain', () => {
     describe('accountSignup', () => {
       describe('when event handled', () => {
-        it('should be named accountSignupStartedSpecs', () => {
-          expect(evt.name).to.equal('accountSignupStarted');
+        it('should be named accountCreated', () => {
+          expect(evt.name).to.equal('accountCreated');
         });
         it('should set the data on the accountSignup aggregate', () => {
           const data = {
             name: 'myName',
             status: 'created',
+
           };
           const agg = {
             set: () => {
