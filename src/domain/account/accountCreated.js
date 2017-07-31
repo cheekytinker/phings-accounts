@@ -10,7 +10,8 @@ module.exports = domain.defineEvent({
   try {
     (async () => {
       const client = await cache();
-      await client.setWithExpiry(createKey(cacheKeys.ACCOUNT_RESERVED, data.name), inFiveMinutes);
+      await client.setWithExpiry(
+        createKey(cacheKeys.ACCOUNT_RESERVED, data.name), 1, inFiveMinutes);
     })();
   } catch (err) {
     log.error(`Failed to send accountVerificationEmail ${err}`);

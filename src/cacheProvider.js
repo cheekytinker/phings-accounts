@@ -12,14 +12,25 @@ class CacheClient {
     this.redisClient = redisClient;
   }
   async set(key, value) {
+    log.info(`SET ${key} with ${value}`);
     await this.redisClient.set(key, value);
   }
   async setWithExpiry(key, value, expires) {
+    log.info(`SETWITHEXPIRY ${key} with ${value}`);
     await this.redisClient.set(key, value);
+    log.info(`EXPIRE ${key} with ${expires}`);
     await this.redisClient.expire(key, expires);
   }
   async get(key) {
-    await this.redisClient.get(key);
+    return new Promise((resolve, reject) => {
+      this.redisClient.get(key, (err, data) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(data);
+      });
+    });
   }
   close() {
     this.redisClient.quit();

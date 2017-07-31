@@ -42,6 +42,20 @@ describe('integration', () => {
         cacheClient.close();
         reset();
       }));
+      it('should store a string value that expires', mochaAsync(async () => {
+        const cacheClient = await cache();
+        const key = shortid.generate();
+        const value = shortid.generate();
+        await cacheClient.setWithExpiry(key, value, 5);
+        const actual = await cacheClient.get(key);
+        expect(actual).to.equal(value);
+        const timeOut = async () => new Promise((resolve) => {
+          setTimeout(resolve, 5000);
+        });
+        await timeOut();
+        const gotValue = await cacheClient.get(key);
+        expect(gotValue).to.equal(null);
+      })).timeout(20000);
     });
   });
 });
