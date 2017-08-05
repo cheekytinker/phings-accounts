@@ -21,7 +21,11 @@
       "babel-register"
     ],
     "sourceMap": false,
-    "instrument": false
+    "instrument": false,
+    "exclude": [
+      "**/acceptance/features/**/*.js",
+      "**/acceptance/postman/**/*.json"
+    ]
   },
   "scripts": {
     "watchSource": "gulp watchSource",
@@ -38,7 +42,7 @@
     "edit": "cross-env swagger_swagger_fileName=src/config/swagger/swagger.yaml swagger project edit",
     "postman": "cross-env DEBUG=swagger-tools:middleware:* node ./runPostmanTests.js",
     "postmantest": "yarn run transpile && yarn run postman",
-    "cucumber": "./node_modules/.bin/cucumber-js build/test/acceptance/features --no-strict -f json:cucumber_report.json",
+    "cucumber": "./node_modules/.bin/cucumber-js test/acceptance/features --compiler js:babel-register --no-strict -f json:cucumber_report.json",
     "cucumbertest": "yarn run transpile && yarn run cucumber && yarn run cucumberreport",
     "cucumberreport": "node build/test/helpers/reporting/cucumberReportCreator.js"
   },

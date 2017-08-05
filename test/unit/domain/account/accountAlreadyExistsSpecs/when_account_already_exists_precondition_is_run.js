@@ -1,4 +1,4 @@
-import { describe, it, beforeEach, afterEach } from 'mocha';
+import { describe, it, before, after, beforeEach, afterEach } from 'mocha';
 import chai from 'chai';
 import dirtyChai from 'dirty-chai';
 import sinon from 'sinon';
@@ -17,13 +17,22 @@ describe('unit', () => {
           name: 'createAccount',
         };
         let stubRead = null;
-        const sandbox = sinon.sandbox.create();
+        let sandbox = null;
+        before(() => {
+          sandbox = sinon.sandbox.create();
+        });
         beforeEach(() => {
           stubRead = sandbox.stub(ras, 'default');
         });
         afterEach(() => {
           sandbox.restore();
           command.name = 'createAccount';
+        });
+        after(() => {
+          if (sandbox) {
+            sandbox.restore();
+            sandbox = null;
+          }
         });
         it('should be named after the command it applies to', () => {
           expect(precon.name).is.equal('createAccount');

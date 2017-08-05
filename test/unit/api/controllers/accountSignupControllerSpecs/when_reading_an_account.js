@@ -16,9 +16,12 @@ describe('unit', () => {
           let req = null;
           let res = null;
           let next = null;
-          const readAccountSignupStub = sinon.stub(ras, 'default');
+          let readAccountSignupStub = null;
+          let sandbox = null;
           let accountName = null;
           before(() => {
+            sandbox = sinon.sandbox.create();
+            readAccountSignupStub = sandbox.stub(ras, 'default');
             accountName = 'myaccount';
             next = () => {};
             res = {
@@ -36,8 +39,9 @@ describe('unit', () => {
             };
           });
           after(() => {
-            if (readAccountSignupStub) {
-              readAccountSignupStub.restore();
+            if (sandbox) {
+              sandbox.restore();
+              sandbox = null;
             }
           });
           it('should return 200 if successful', (done) => {
@@ -46,7 +50,7 @@ describe('unit', () => {
               name: accountName,
               status: 'created',
             }));
-            const mock = sinon.mock(res);
+            const mock = sandbox.mock(res);
             mock.expects('status').once().withArgs(200);
             readAccountSignupRest(req, res, next)
               .then(() => {
@@ -63,7 +67,7 @@ describe('unit', () => {
               name: accountName,
               status: 'created',
             }));
-            const mock = sinon.mock(res);
+            const mock = sandbox.mock(res);
             mock.expects('json').once().withArgs({
               key: accountName,
               name: accountName,
@@ -83,7 +87,7 @@ describe('unit', () => {
               code: errorCodes.serverError,
               message: 'Some server error',
             }));
-            const mock = sinon.mock(res);
+            const mock = sandbox.mock(res);
             mock.expects('status').once().withArgs(500);
             readAccountSignupRest(req, res, next)
               .then(() => {
@@ -99,7 +103,7 @@ describe('unit', () => {
               code: errorCodes.notFound,
               message: 'Cannot find it',
             }));
-            const mock = sinon.mock(res);
+            const mock = sandbox.mock(res);
             mock.expects('status').once().withArgs(404);
             readAccountSignupRest(req, res, next)
               .then(() => {
@@ -115,7 +119,7 @@ describe('unit', () => {
               code: errorCodes.badRequest,
               message: 'No key supplied',
             }));
-            const mock = sinon.mock(res);
+            const mock = sandbox.mock(res);
             mock.expects('status').once().withArgs(400);
             readAccountSignupRest(req, res, next)
               .then(() => {

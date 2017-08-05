@@ -21,7 +21,6 @@ Feature: User signs up for an account
     And a create account signup request is made
     And the response to be 400 'Error "Account Already Exists"'
 
-
   Scenario: Attempt to signup really quickly for account that is already taken
     Given an account named '<autogenerate>'
     And the Primary Contact email is 'anthony.hollingsworth@elateral.com'

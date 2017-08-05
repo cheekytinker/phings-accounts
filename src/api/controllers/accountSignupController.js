@@ -3,6 +3,7 @@ import createAccountSignup from '../mutations/createAccountSignup';
 import verifyAccountSignup from '../mutations/verifyAccountSignup';
 import readAccountSignup from '../queries/readAccountSignup';
 import errorCodes from '../../utilities/errorCodes';
+import errorMessages from '../../utilities/errorMessages';
 
 function createAccountSignupRest(req, res, next) {
   log.info('create accountSignup signup');
@@ -76,7 +77,23 @@ function verifyAccountSignupRest(req, res, next) {
   })
   .catch((err) => {
     log.info(`Error: ${err.name} : ${err.message} : ${err.more}`);
-    res.status(400);
+    if (err.name === errorMessages.ACCOUNT_VERIFICATION_NOT_EXPECTED) {
+      res.status(403);
+      res.json({
+        message: `Error "${err.message}"`,
+      });
+      next();
+      return;
+    }
+    if (err.name === errorMessages.ACCOUNT_NOT_FOUND) {
+      res.status(404);
+      res.json({
+        message: `Error "${err.message}"`,
+      });
+      next();
+      return;
+    }
+    res.status(500);
     res.json({
       message: `Error "${err.message}"`,
     });
