@@ -14,10 +14,11 @@ async function accountExists(key, callback) {
     log.info(`Result of as read ${JSON.stringify(err)}`);
     if (err.code !== errorCodes.notFound) {
       log.error(err);
-      callback(new Error(err));
+      callback(err);
+      return true;
     }
   }
-  log.info('Return false');
+  log.info('account does not exist');
   callback(null);
   return false;
 }
@@ -26,9 +27,7 @@ module.exports = domain.definePreLoadCondition({
   name: 'createAccount',
   payload: 'payload',
   priority: 1,
-}, (data, callback) => {
+}, async (data, callback) => {
   log.info(`Running Pre Load Condition: accountAlreadyExists ${JSON.stringify(data)}`);
-  if (!accountExists(data.name, callback)) {
-    log.info('account does not exist');
-  }
+  await accountExists(data.name, callback);
 });

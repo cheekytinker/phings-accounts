@@ -37,6 +37,24 @@ describe('unit', () => {
         it('should be named after the command it applies to', () => {
           expect(precon.name).is.equal('createAccount');
         });
+        it('should return error if error other than not found is raised', (done) => {
+          const key = 'myAccountName';
+          const error = {
+            code: errorCodes.serverError,
+            message: 'Some error',
+          };
+          stubRead.returns(Promise.reject(error));
+          const data = {
+            name: key,
+            primaryContact: {
+            },
+          };
+          const callback = (res) => {
+            expect(res).to.deep.equal(error);
+            done();
+          };
+          precon.preLoadConditionFn(data, callback);
+        });
         it('should not raise an error if account does not exist in readDomain', (done) => {
           const key = 'myAccountName';
           stubRead.returns(Promise.reject({

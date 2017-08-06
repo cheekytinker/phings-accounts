@@ -7,7 +7,7 @@ import { friendlyVerifyAccountSignupRest } from '../../../../../src/api/controll
 describe('unit', () => {
   describe('api', () => {
     describe('accountSignupControllerSpecs', () => {
-      describe('when verifying an account', () => {
+      describe('when verifying from a link from an email as a get', () => {
         let req = null;
         let res = null;
         let next = null;
