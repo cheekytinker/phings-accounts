@@ -25,8 +25,8 @@ const config = {
       `${(process.env.APPLICATION_NAME || 'phings-accounts')}_`,
   },
   mailgun: {
-    apiKey: process.env.MAILGUN_API_KEY || 'key-25101ab8baae7cb6c615ad5d776aa7f2',
-    domain: process.env.MAILGUN_DOMAIN || 'sandboxaedc7f48ed604c4ba0ab06201f222606.mailgun.org',
+    apiKey: process.env.MAILGUN_API_KEY || '',
+    domain: process.env.MAILGUN_DOMAIN || '',
   },
 };
 
