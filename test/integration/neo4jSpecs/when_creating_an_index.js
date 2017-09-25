@@ -20,7 +20,7 @@ async function cypher(db, queryOptions) {
   });
 }
 
-describe('integration', () => {
+describe.skip('integration', () => {
   describe('neo4jSpecs', () => {
     describe('when searching in an index', () => {
       let db = null;

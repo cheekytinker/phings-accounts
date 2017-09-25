@@ -9,7 +9,7 @@ import config from '../../../src/config/application';
 const expect = chai.expect;
 chai.use(dirtyChai);
 
-describe('integration', () => {
+describe.skip('integration', () => {
   describe('elasticSearchSpecs', () => {
     describe('when creating an index', () => {
       let indexName = null;

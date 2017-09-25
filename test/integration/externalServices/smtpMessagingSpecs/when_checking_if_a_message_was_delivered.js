@@ -8,7 +8,7 @@ import { send, wasAccepted } from '../../../../src/externalServices/smtpMessagin
 const expect = chai.expect;
 chai.use(dirtyChai);
 
-describe('integration', () => {
+describe.skip('integration', () => {
   describe('externalServices', () => {
     describe('smtpMessaging', () => {
       describe('when checking if a message was delivered', () => {
