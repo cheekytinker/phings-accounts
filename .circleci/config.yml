@@ -156,6 +156,9 @@ workflows:
         - test:
             requires:
               - build
+        - coverage:
+            requires:
+              - build
         - deploy-production:
             context: org-global
             requires:
