@@ -1,5 +1,5 @@
 const newman = require('newman');
-const app = require('./build/src/app');
+const app = require('./build/app');
 const collection = require('./test/acceptance/postman/postman_collection.json');
 const environment = require('./test/acceptance/postman/postman_environment.json');
 
@@ -10,8 +10,8 @@ app.default
       collection,
       reporters: ['cli', 'html', 'junit'],
       reporter: {
-        junit: { export: './postmanXmlResults.xml' },
-        html: { export: './postmanHtmlResults.html' },
+        junit: { export: './testoutput/postmanXmlResults.xml' },
+        html: { export: './testoutput/postmanHtmlResults.html' },
       },
       environment,
     }, (err, summary) => {

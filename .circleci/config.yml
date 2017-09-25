@@ -1,0 +1,159 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:8.1.4
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - yarn-cache
+      - run: echo 'export PATH=$PATH:$CIRCLE_WORKING_DIRECTORY/node_modules/.bin:/usr/local/bin/' >> $BASH_ENV
+      - run: yarn --version
+      - run: yarn install
+      - run: yarn run clean
+      - run: yarn run lint
+      - run: yarn run transpile
+      - persist_to_workspace:
+          root: .
+          paths:
+            - build
+      - save_cache:
+          key: yarn-cache
+          paths:
+              - ~/.cache/yarn
+  test:
+    docker:
+      - image: circleci/node:8.1.4
+      - image: mongo
+      - image: rabbitmq:3-management
+      - image: neo4j:3.0
+      - image: redis
+      - image: docker.elastic.co/elasticsearch/elasticsearch:5.6.1
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - yarn-cache
+      - attach_workspace:
+          at: .
+      - run: echo 'export PATH=$PATH:$CIRCLE_WORKING_DIRECTORY/node_modules/.bin:/usr/local/bin/' >> $BASH_ENV
+      - run: echo 127.0.0.1 mongo | sudo tee -a /etc/hosts
+      - run: yarn install
+      - run: yarn run test
+      - run: yarn run cover
+      - run: yarn run checkcover
+      - run: yarn run postman
+      - run: yarn run cucumber
+      - run: yarn run cucumberreport
+      - save_cache:
+          key: yarn-cache
+          paths:
+              - ~/.cache/yarn
+      - store_artifacts:
+          path: coverage
+          destination: coverage
+      - store_artifacts:
+          path: testoutput/postmanHtmlResults.html
+          destination: postman
+      - store_artifacts:
+          path: testoutput/cucumber_report.html
+          destination: features
+      - store_artifacts:
+          path: testoutput/junit/test-results.xml
+          destination: tests
+      - store_test_results:
+          path: testoutput/
+  deploy-production:
+    docker:
+      - image: docker:17.05.0-ce-git
+    steps:
+      - checkout
+      - run: echo export PKG_VERSION=$(awk '/version/{gsub(/("|",)/,"",$2);print $2};' package.json) >> .circlerc
+      - run: echo export GIT_HASH=$(git rev-parse --short HEAD) >> .circlerc
+      - run: echo 'export BUILD_TAG="$PKG_VERSION-$CIRCLE_BUILD_NUM.$GIT_HASH"' >> .circlerc
+      - attach_workspace:
+          at: .
+      - setup_remote_docker
+      - run:
+          name: Create and push docker image
+          command: |
+            source .circlerc
+            docker info
+            docker build --rm=false -t "cheekytinker/$CIRCLE_PROJECT_REPONAME:$BUILD_TAG" .
+            docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+            docker push "cheekytinker/$CIRCLE_PROJECT_REPONAME:$BUILD_TAG"
+            docker tag "cheekytinker/$CIRCLE_PROJECT_REPONAME:$BUILD_TAG" "cheekytinker/$CIRCLE_PROJECT_REPONAME:$CIRCLE_BRANCH"
+            docker tag "cheekytinker/$CIRCLE_PROJECT_REPONAME:$BUILD_TAG" "cheekytinker/$CIRCLE_PROJECT_REPONAME:latest"
+  deploy-beta:
+      docker:
+        - image: docker:17.05.0-ce-git
+      steps:
+        - checkout
+        - run: echo export PKG_VERSION=$(awk '/version/{gsub(/("|",)/,"",$2);print $2};' package.json) >> .circlerc
+        - run: echo export GIT_HASH=$(git rev-parse --short HEAD) >> .circlerc
+        - run: echo 'export BUILD_TAG="$PKG_VERSION-$CIRCLE_BUILD_NUM.$GIT_HASH"' >> .circlerc
+        - attach_workspace:
+            at: .
+        - setup_remote_docker
+        - run:
+            name: Create and push docker image
+            command: |
+              source .circlerc
+              docker info
+              docker build --rm=false -t "cheekytinker/$CIRCLE_PROJECT_REPONAME:$BUILD_TAG" .
+              docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+              docker push "cheekytinker/$CIRCLE_PROJECT_REPONAME:$BUILD_TAG"
+              docker tag "cheekytinker/$CIRCLE_PROJECT_REPONAME:$BUILD_TAG" "cheekytinker/$CIRCLE_PROJECT_REPONAME:$CIRCLE_BRANCH"
+              docker tag "cheekytinker/$CIRCLE_PROJECT_REPONAME:$BUILD_TAG" "cheekytinker/$CIRCLE_PROJECT_REPONAME:beta"
+  deploy-dev:
+    docker:
+      - image: docker:17.05.0-ce-git
+    steps:
+      - checkout
+      - run: echo export PKG_VERSION=$(awk '/version/{gsub(/("|",)/,"",$2);print $2};' package.json) >> .circlerc
+      - run: echo export GIT_HASH=$(git rev-parse --short HEAD) >> .circlerc
+      - run: echo 'export BUILD_TAG="$PKG_VERSION-$CIRCLE_BUILD_NUM.$GIT_HASH"' >> .circlerc
+      - attach_workspace:
+          at: .
+      - setup_remote_docker
+      - run:
+          name: Create and push docker image
+          command: |
+            source .circlerc
+            docker info
+            docker build --rm=false -t "cheekytinker/$CIRCLE_PROJECT_REPONAME:$BUILD_TAG" .
+            docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+            docker push "cheekytinker/$CIRCLE_PROJECT_REPONAME:$BUILD_TAG"
+            docker tag "cheekytinker/$CIRCLE_PROJECT_REPONAME:$BUILD_TAG" "cheekytinker/$CIRCLE_PROJECT_REPONAME:$CIRCLE_BRANCH"
+workflows:
+    version: 2
+    build-and-deploy:
+      jobs:
+        - build
+        - test:
+            requires:
+              - build
+        - deploy-production:
+            context: org-global
+            requires:
+                - test
+            filters:
+                branches:
+                  only: master
+        - deploy-beta:
+            context: org-global
+            requires:
+                - test
+            filters:
+                branches:
+                  only: /^.*-rc/
+        - deploy-dev:
+            context: org-global
+            requires:
+                - test
+            filters:
+                branches:
+                  only:
+                    - /^.*-feature$/
+                    - /^.*-defect$/

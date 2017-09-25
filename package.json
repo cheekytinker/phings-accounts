@@ -22,6 +22,9 @@
     ],
     "sourceMap": false,
     "instrument": false,
+    "include": [
+      "src/**/*.js"
+    ],
     "exclude": [
       "**/acceptance/features/**/*.js",
       "**/acceptance/postman/**/*.json"
@@ -30,21 +33,24 @@
   "scripts": {
     "watchSource": "gulp watchSource",
     "transpile": "gulp transpileSource",
-    "test": "gulp runtests",
+    "test": "mocha --compilers js:babel-core/register test --recursive",
     "checkcover": "nyc check-coverage --functions 100 --lines 100 --statements 100 --branches 90 ",
-    "cover": "cross-env NODE_ENV=test nyc --reporter=lcov --reporter=text-lcov  mocha --reporter mocha-junit-reporter test --recursive",
+    "cover": "cross-env NODE_ENV=test nyc --reporter=lcov --reporter=text-lcov  mocha --reporter mocha-junit-reporter --reporter-options mochaFile=./testoutput/test-results.xml test --recursive",
+    "testwithcover": "yarn run clean && yarn run cover && yarn run checkcover",
     "lintdebug": "eslint \"src\\**\" --debug",
     "lint": "eslint \"src\\**\" ",
     "clean": "gulp cleanbuildfiles",
-    "build": "yarn run clean && yarn run lint && yarn run transpile && yarn run test && yarn run cover && yarn run checkcover && yarn run postman && yarn run cucumbertest",
-    "start": "cross-env DEBUG=swagger-tools:middleware:* node build/src/index.js",
+    "build": "yarn run clean && yarn run lint && yarn run transpile && yarn run test && yarn run postman && yarn run cucumbertest && yarn run cover && yarn run checkcover",
+    "start": "cross-env DEBUG=swagger-tools:middleware:* node build/index.js",
     "dockerstart": "node index.js",
     "edit": "cross-env swagger_swagger_fileName=src/config/swagger/swagger.yaml swagger project edit",
     "postman": "cross-env DEBUG=swagger-tools:middleware:* node ./runPostmanTests.js",
     "postmantest": "yarn run transpile && yarn run postman",
-    "cucumber": "./node_modules/.bin/cucumber-js test/acceptance/features --compiler js:babel-register --no-strict -f json:cucumber_report.json",
+    "cucumber": "./node_modules/.bin/cucumber-js test/acceptance/features --compiler js:babel-register --no-strict -f json:testoutput/cucumber_report.json",
+    "cucumberdebug": "cross-env CUCUMBER_DEBUG=true yarn run cucumber",
     "cucumbertest": "yarn run transpile && yarn run cucumber && yarn run cucumberreport",
-    "cucumberreport": "node build/test/helpers/reporting/cucumberReportCreator.js"
+    "cucumbertestdebug": "yarn run cucumberdebug && yarn run cucumberreport",
+    "cucumberreport": "gulp cucumberreport"
   },
   "author": "A Hollingsworth",
   "license": "ISC",

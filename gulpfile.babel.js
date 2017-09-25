@@ -1,6 +1,9 @@
 'use strict';
 
 require('babel-core/register');
+import fs from 'fs';
+import promisify from 'es6-promisify';
+import reporter from 'cucumber-html-reporter';
 const gulp = require('gulp');
 const watch = require('gulp-watch');
 const sourcemaps = require('gulp-sourcemaps');
@@ -11,24 +14,28 @@ const mocha = require('gulp-mocha');
 const clean = require('gulp-clean');
 const istanbul = require('gulp-istanbul');
 const isparta = require('isparta');
-const testFiles = 'test/**/*.js';
+
+//const testFiles = 'test/**/*.js';
 const srcFiles = 'src/**/*.js';
 const jsonFiles = 'src/**/*.json';
 const buildFiles = 'build/**/*.*';
 const yamlFiles = 'src/config/**/*.yaml';
+const stat = promisify(fs.stat);
+
+
 
 gulp.task('copyconfig', () => {
-  gulp.src([yamlFiles])
-    .pipe(gulp.dest('build/src/config'));
+  gulp.src([yamlFiles], { base: 'src' })
+    .pipe(gulp.dest('build'));
 });
 
 gulp.task('copymisc', ['copyconfig'], () => {
-  gulp.src([jsonFiles])
-    .pipe(gulp.dest('build/src/'));
+  gulp.src([jsonFiles], { base: 'src' })
+    .pipe(gulp.dest('build'));
 });
 
 gulp.task('transpileSource', ['copymisc'], () => {
-  gulp.src([srcFiles])
+  gulp.src([srcFiles], { base: 'src' })
     .pipe(plumber(function (error) {
       console.log('Error transpiling', error.message);
       this.emit('end');
@@ -38,14 +45,7 @@ gulp.task('transpileSource', ['copymisc'], () => {
       presets: ['latest-minimal'],
     }))
     .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest('./build/src/'));
-});
-
-gulp.task('runtests', ['transpileSource'], () => {
-  return gulp.src([testFiles])
-    .pipe(babel({presets: ['latest-minimal']}))
-    .pipe(gulp.dest('./build/test/'))
-    .pipe(mocha());
+    .pipe(gulp.dest('build'));
 });
 
 gulp.task('watchSource', ['transpileSource'], () => {
@@ -56,5 +56,29 @@ gulp.task('cleanbuildfiles', () => {
   gulp.src(buildFiles, { read: false })
     .pipe(clean());
 });
+
+gulp.task('cucumberreport', async () => {
+  const reportJsonPath = './testoutput/cucumber_report.json';
+  if (!await stat(reportJsonPath)) {
+    return;
+  }
+  const options = {
+    theme: 'bootstrap',
+    jsonFile: reportJsonPath,
+    output: './testoutput/cucumber_report.html',
+    reportSuiteAsScenarios: true,
+    launchReport: false,
+    metadata: {
+      'App Version': '0.3.2',
+      'Test Environment': 'STAGING',
+      Browser: 'Chrome  54.0.2840.98',
+      Platform: 'Windows 10',
+      Parallel: 'Scenarios',
+      Executed: 'Remote',
+    },
+  };
+  reporter.generate(options);
+});
+
 
 
