@@ -22,6 +22,33 @@ jobs:
           key: yarn-cache
           paths:
               - ~/.cache/yarn
+  coverage:
+    docker:
+      - image: circleci/node:8.1.4
+      - image: mongo
+      - image: rabbitmq:3-management
+      - image: neo4j:3.0
+      - image: redis
+      - image: docker.elastic.co/elasticsearch/elasticsearch:5.6.1
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - yarn-cache
+      - attach_workspace:
+          at: .
+      - run: echo 'export PATH=$PATH:$CIRCLE_WORKING_DIRECTORY/node_modules/.bin:/usr/local/bin/' >> $BASH_ENV
+      - run: echo 127.0.0.1 mongo | sudo tee -a /etc/hosts
+      - run: yarn install
+      - run: yarn run cover
+      - run: yarn run checkcover
+      - save_cache:
+          key: yarn-cache
+          paths:
+              - ~/.cache/yarn
+      - store_artifacts:
+          path: coverage
+          destination: coverage
   test:
     docker:
       - image: circleci/node:8.1.4
@@ -41,8 +68,6 @@ jobs:
       - run: echo 127.0.0.1 mongo | sudo tee -a /etc/hosts
       - run: yarn install
       - run: yarn run test
-      - run: yarn run cover
-      - run: yarn run checkcover
       - run: yarn run postman
       - run: yarn run cucumber
       - run: yarn run cucumberreport
@@ -50,9 +75,6 @@ jobs:
           key: yarn-cache
           paths:
               - ~/.cache/yarn
-      - store_artifacts:
-          path: coverage
-          destination: coverage
       - store_artifacts:
           path: testoutput/postmanHtmlResults.html
           destination: postman
@@ -138,6 +160,7 @@ workflows:
             context: org-global
             requires:
                 - test
+                - coverage
             filters:
                 branches:
                   only: master
@@ -145,6 +168,7 @@ workflows:
             context: org-global
             requires:
                 - test
+                - coverage
             filters:
                 branches:
                   only: /^.*-rc/
@@ -152,6 +176,7 @@ workflows:
             context: org-global
             requires:
                 - test
+                - coverage
             filters:
                 branches:
                   only:
