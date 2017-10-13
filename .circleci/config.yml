@@ -154,10 +154,13 @@ workflows:
     build-and-deploy:
       jobs:
         - build
+            context: org-global
         - test:
+            context: org-global
             requires:
               - build
         - coverage:
+            context: org-global
             requires:
               - build
         - deploy-production:
