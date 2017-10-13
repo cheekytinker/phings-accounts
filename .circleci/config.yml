@@ -104,7 +104,7 @@ jobs:
             source .circlerc
             docker info
             docker build --rm=false -t "cheekytinker/$CIRCLE_PROJECT_REPONAME:$BUILD_TAG" .
-            docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+            docker login -u $DOCKER_USER -p $DOCKER_PASS
             docker push "cheekytinker/$CIRCLE_PROJECT_REPONAME:$BUILD_TAG"
             docker tag "cheekytinker/$CIRCLE_PROJECT_REPONAME:$BUILD_TAG" "cheekytinker/$CIRCLE_PROJECT_REPONAME:$CIRCLE_BRANCH"
             docker tag "cheekytinker/$CIRCLE_PROJECT_REPONAME:$BUILD_TAG" "cheekytinker/$CIRCLE_PROJECT_REPONAME:latest"
@@ -125,7 +125,7 @@ jobs:
               source .circlerc
               docker info
               docker build --rm=false -t "cheekytinker/$CIRCLE_PROJECT_REPONAME:$BUILD_TAG" .
-              docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+              docker login -u $DOCKER_USER -p $DOCKER_PASS
               docker push "cheekytinker/$CIRCLE_PROJECT_REPONAME:$BUILD_TAG"
               docker tag "cheekytinker/$CIRCLE_PROJECT_REPONAME:$BUILD_TAG" "cheekytinker/$CIRCLE_PROJECT_REPONAME:$CIRCLE_BRANCH"
               docker tag "cheekytinker/$CIRCLE_PROJECT_REPONAME:$BUILD_TAG" "cheekytinker/$CIRCLE_PROJECT_REPONAME:beta"
