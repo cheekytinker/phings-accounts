@@ -36,7 +36,7 @@
     "test": "mocha --compilers js:babel-core/register test --recursive",
     "checkcover": "nyc check-coverage --functions 100 --lines 100 --statements 100 --branches 90 ",
     "cover": "cross-env NODE_ENV=test nyc --reporter=lcov --reporter=text-lcov  mocha --reporter mocha-junit-reporter --reporter-options mochaFile=./testoutput/test-results.xml test --recursive",
-    "coveralls": "nyc report --reporter=text-lcov | coveralls",
+    "coveralls": "nyc report --reporter=text-lcov | coveralls -v",
     "testwithcover": "yarn run clean && yarn run cover && yarn run checkcover",
     "lintdebug": "eslint \"src\\**\" --debug",
     "lint": "eslint \"src\\**\" ",
