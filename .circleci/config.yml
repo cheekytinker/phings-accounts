@@ -40,7 +40,7 @@ jobs:
       - run: echo 'export PATH=$PATH:$CIRCLE_WORKING_DIRECTORY/node_modules/.bin:/usr/local/bin/' >> $BASH_ENV
       - run: echo 127.0.0.1 mongo | sudo tee -a /etc/hosts
       - run: yarn install
-      - run: yarn run cover
+      - run: yarn run coveralls
       - run: yarn run checkcover
       - save_cache:
           key: yarn-cache

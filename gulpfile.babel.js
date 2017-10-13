@@ -16,13 +16,12 @@ const istanbul = require('gulp-istanbul');
 const isparta = require('isparta');
 
 //const testFiles = 'test/**/*.js';
+const devEnvConfigFiles = '.env';
 const srcFiles = 'src/**/*.js';
 const jsonFiles = 'src/**/*.json';
 const buildFiles = 'build/**/*.*';
 const yamlFiles = 'src/config/**/*.yaml';
 const stat = promisify(fs.stat);
-
-
 
 gulp.task('copyconfig', () => {
   gulp.src([yamlFiles], { base: 'src' })

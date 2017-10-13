@@ -5,6 +5,8 @@ accounts:
     - RUN_TESTS=true
     - CIRCLE_TOKEN=
   image: 'cheekytinker/phings-accounts:latest'
+  tags:
+    - DeployTest2
   links:
     - db
     - messaging

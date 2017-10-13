@@ -26,7 +26,7 @@ describe('acceptance', () => {
               const { body: { errors: [{ errors: [{ params: [param] }] }] } } = res;
               expect(param).to.deep.equal('primaryContact');
             }),
-        ));
+        )).timeout(10000);
       });
     });
   });

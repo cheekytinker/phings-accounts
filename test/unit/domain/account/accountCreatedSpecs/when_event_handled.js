@@ -4,6 +4,7 @@ import dirtyChai from 'dirty-chai';
 import sinon from 'sinon';
 import * as evt from '../../../../../src/domain/account/accountCreated';
 import * as cache from '../../../../../src/cacheProvider';
+import { cacheKeys } from '../../../../../src/domain/account/cacheKeys';
 
 const expect = chai.expect;
 chai.use(dirtyChai);
@@ -42,7 +43,7 @@ describe('unit', () => {
           it('should add entry into cache for account name to expire in 5 mins', () => {
             const accountName = 'fred123';
             const cacheKeyForAccountName = accountName;
-            const mockCache = sandbox.mock(cache);
+            const mockCache = sandbox.mock(cache.default);
             const cacheClient = {
               setWithExpiry: () => {
               },
@@ -52,9 +53,8 @@ describe('unit', () => {
             mockCacheClient
               .expects('setWithExpiry')
               .once()
-              .withArgs(cacheKeyForAccountName, 1, inFiveMinutes)
+              .withArgs(`${cacheKeys.ACCOUNT_RESERVED}_${cacheKeyForAccountName}`, 1, inFiveMinutes)
               .returns(Promise.resolve());
-            mockCache.expects('createKey').once().returns(cacheKeyForAccountName);
             mockCache.expects('cache').once().returns(Promise.resolve(cacheClient));
             const data = {
               name: accountName,

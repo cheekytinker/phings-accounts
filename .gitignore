@@ -36,3 +36,6 @@ node_modules
 # Runtime configuration for swagger app
 config/runtime.yaml
 /.nyc_output/
+
+# Environment variables so we can run tests locally
+.env
