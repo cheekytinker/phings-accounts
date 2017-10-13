@@ -10,7 +10,7 @@ chai.use(dirtyChai);
 
 describe('acceptance', () => {
   describe('api', () => {
-    describe('accountSignupSpecs', () => {
+    describe.skip('accountSignupSpecs', () => {
       describe('when signing up for an account', () => {
         beforeEach(mochaAsync(async () => {
           await app.restart();
