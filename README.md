@@ -4,7 +4,7 @@ A micro service to support creation and management of accounts
 It has a REST api and a graphql API
 It is using cqrs and event-sourcing patterns
 
-[![Coverage Status](https://coveralls.io/repos/github/cheekytinker/phings-accounts/badge.svg?branch=master)](https://coveralls.io/github/cheekytinker/phings-accounts?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/cheekytinker/phings-accounts/badge.svg)](https://coveralls.io/github/cheekytinker/phings-accounts)
 
 ## Getting Started
 
