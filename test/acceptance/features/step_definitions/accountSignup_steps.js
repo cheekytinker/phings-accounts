@@ -119,6 +119,9 @@ defineSupportCode(({ Given, When, Then }) => {
         .then(message => getMessageDetails(message))
         .then((messageDetails) => {
           this.verificationCode = findVerificationCode(messageDetails);
+        })
+        .catch((err) => {
+          throw Error(err);
         });
     });
 
