@@ -8,7 +8,7 @@ import { send, wasAccepted } from '../../../../src/externalServices/smtpMessagin
 const expect = chai.expect;
 chai.use(dirtyChai);
 
-describe.skip('integration', () => {
+describe('integration', () => {
   describe('externalServices', () => {
     describe('smtpMessaging', () => {
       describe('when checking if a message was delivered', () => {
@@ -25,15 +25,23 @@ describe.skip('integration', () => {
           };
           const subject = shortid.generate();
           const retries = 10;
-          await send(
+          try {
+            await send(
               'me@samples.mailgun.org',
               email,
               subject,
               'test',
               'test',
-          );
-          const event = await wasAccepted(queryParams, subject, retries);
-          expect(event.message.headers.subject).to.equal(subject);
+            );
+          } catch (err) {
+            throw Error(err);
+          }
+          try {
+            const event = await wasAccepted(queryParams, subject, retries);
+            expect(event.message.headers.subject).to.equal(subject);
+          } catch (err) {
+            throw (err);
+          }
         })).timeout(120000);
       });
     });

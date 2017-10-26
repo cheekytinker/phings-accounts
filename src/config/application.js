@@ -2,6 +2,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+console.log(JSON.stringify(process.env));
+
 const config = {
   app: {
     name: process.env.APPLICATION_NAME || 'phings-accounts',

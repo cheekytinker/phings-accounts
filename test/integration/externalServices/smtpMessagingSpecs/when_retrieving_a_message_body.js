@@ -8,7 +8,7 @@ import { send, getMessageDetails, wasAccepted } from '../../../../src/externalSe
 const expect = chai.expect;
 chai.use(dirtyChai);
 
-describe.skip('integration', () => {
+describe('integration', () => {
   describe('externalServices', () => {
     describe('smtpMessaging', () => {
       describe('when retrieving a message body', () => {
