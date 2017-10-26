@@ -15,8 +15,6 @@ const clean = require('gulp-clean');
 const istanbul = require('gulp-istanbul');
 const isparta = require('isparta');
 
-const testFiles = 'test/**/*.js';
-const unitTestFiles = 'test/unit/**/*.js';
 const srcFiles = 'src/**/*.js';
 const jsonFiles = 'src/**/*.json';
 const buildFiles = 'build/**/*.*';
@@ -45,33 +43,6 @@ gulp.task('transpileSource', ['copymisc'], () => {
     }))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('build'));
-});
-
-function runTests(testFilesPath) {
-  return gulp.src([testFilesPath])
-    .pipe(mocha({compilers:'js:babel-core/register'}))
-    .once('error', () => {
-      console.log('Error');
-    })
-    .once('end', () => {
-      console.log('End');
-    })
-}
-
-gulp.task('testWithGulp', () => {
-  return runTests(testFiles);
-});
-
-gulp.task('unitTestWithGulp', () => {
-  return runTests(unitTestFiles);
-});
-
-gulp.task('watchAllTests', ['testWithGulp'], () => {
-  gulp.watch([srcFiles, testFiles, yamlFiles, jsonFiles], ['testWithGulp']);
-});
-
-gulp.task('watchUnitTests', ['unitTestWithGulp'], () => {
-  gulp.watch([srcFiles, unitTestFiles, yamlFiles, jsonFiles], ['unitTestWithGulp']);
 });
 
 gulp.task('cleanbuildfiles', () => {
