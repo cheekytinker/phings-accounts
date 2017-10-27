@@ -9,9 +9,8 @@ import dotenv from 'dotenv';
 defineSupportCode(function ({ registerHandler }) {
   registerHandler('BeforeFeatures', function () {
     let envConfig = {};
-    if (fs.existsSync('blarr.env')) {
-      envConfig = dotenv.parse(fs.readFileSync('blarr.env'));
-      console.log(JSON.stringify(envConfig));
+    if (fs.existsSync('.env')) {
+      envConfig = dotenv.parse(fs.readFileSync('.env'));
       // replace with running of docker image
     } else {
       envConfig = process.env;

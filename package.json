@@ -33,7 +33,7 @@
   "scripts": {
     "watchSource": "gulp watchSource",
     "transpile": "gulp transpileSource",
-    "test": "mocha --compilers js:babel-core/register test --recursive",
+    "test": "mocha --compilers js:babel-core/register --reporter mocha-junit-reporter --reporter-options mochaFile=./testoutput/test-results.xml test --recursive",
     "watchAllTests": "mocha --compilers js:babel-core/register test --recursive --watch",
     "watchUnitTests": "mocha --compilers js:babel-core/register test/unit --recursive --watch",
     "checkcover": "nyc check-coverage --functions 100 --lines 100 --statements 100 --branches 90 ",
