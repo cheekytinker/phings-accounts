@@ -103,6 +103,22 @@ describe('unit', () => {
         expect(subscribeTo).to.equal('command');
         expect(typeof (callback)).is.equal('function');
       });
+      it('subscribe twice to commands should subscribe only once to bus', () => {
+        const bus = {
+          publish: () => {
+          },
+          subscribe: () => {
+          },
+        };
+        stubBus.returns(bus);
+        const mockBus = sandbox.mock(bus);
+        mockBus.expects('subscribe').once();
+        const cb = () => {};
+        const cb2 = () => {};
+        d.default.onCommand(cb);
+        d.default.onCommand(cb2);
+        mockBus.verify();
+      });
       it('subscribe to an event should subscribe to bus for an event for first subscription', () => {
         let callback = null;
         let subscribeTo = null;

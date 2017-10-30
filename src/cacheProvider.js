@@ -11,19 +11,23 @@ class CacheClient {
   constructor(redisClient) {
     this.redisClient = redisClient;
   }
+
   async set(key, value) {
     log.info(`SET ${key} with ${value}`);
     await this.redisClient.set(key, value);
   }
+
   async setWithExpiry(key, value, expires) {
     log.info(`SETWITHEXPIRY ${key} with ${value}`);
     await this.redisClient.set(key, value);
     log.info(`EXPIRE ${key} with ${expires}`);
     await this.redisClient.expire(key, expires);
   }
+
   async get(key) {
     return new Promise((resolve, reject) => {
       this.redisClient.get(key, (err, data) => {
+        /* istanbul ignore next */
         if (err) {
           reject(err);
           return;
@@ -32,6 +36,7 @@ class CacheClient {
       });
     });
   }
+
   close() {
     this.redisClient.quit();
   }
@@ -51,7 +56,8 @@ function createCacheClient() {
         singleCacheClient = new CacheClient(client);
         resolve(singleCacheClient);
       });
-    } catch (err) {
+    } /* istanbul ignore next */ catch (err) {
+      /* istanbul ignore next */
       log.error(`cacheProvider Error ${err}`);
       reject(err);
     }

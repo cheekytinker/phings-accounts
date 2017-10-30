@@ -56,6 +56,12 @@ describe('integration', () => {
         const gotValue = await cacheClient.get(key);
         expect(gotValue).to.equal(null);
       })).timeout(20000);
+      it('should return null when key cannot be found', mochaAsync(async () => {
+        const cacheClient = await cache();
+        const nonExistentKey = shortid.generate();
+        const gotValue = await cacheClient.get(nonExistentKey);
+        expect(gotValue).to.equal(null);
+      }));
     });
   });
 });
