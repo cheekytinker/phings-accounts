@@ -59,6 +59,7 @@ function createCacheClient() {
     } /* istanbul ignore next */ catch (err) {
       /* istanbul ignore next */
       log.error(`cacheProvider Error ${err}`);
+      /* istanbul ignore next */
       reject(err);
     }
   });

@@ -37,6 +37,10 @@ describe('integration', () => {
       it('should disconnect from redis when reset', () => {
         reset();
       });
+      it('should not error if called twice', () => {
+        reset();
+        reset();
+      });
       it('should quit redis connnection when closed', mochaAsync(async () => {
         const cacheClient = await cache();
         cacheClient.close();
