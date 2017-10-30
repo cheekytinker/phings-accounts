@@ -4,8 +4,9 @@ import dirtyChai from 'dirty-chai';
 import sinon from 'sinon';
 import * as d from '../../../../../src/cqrsDomain';
 import * as cqrsReadDomain from '../../../../../src/cqrsReadDomain';
-import * as ras from '../../../../../src/api/queries/readAccountSignup';
+import * as read from '../../../../../src/api/queries/readAccountSignup';
 import verifyAccountSignup from '../../../../../src/api/mutations/verifyAccountSignup';
+import mochaAsync from '../../../../helpers/mochaAsync';
 
 const expect = chai.expect;
 chai.use(dirtyChai);
@@ -22,11 +23,14 @@ describe('unit', () => {
           const sandbox = sinon.sandbox.create();
           beforeEach(() => {
             const dm = {
-              handle: () => {},
-              getInfo: () => {},
+              handle: () => {
+              },
+              getInfo: () => {
+              },
             };
             accountSignupRepo = {
-              findOne: () => {},
+              findOne: () => {
+              },
             };
             const rd = {
               repository: {
@@ -44,15 +48,9 @@ describe('unit', () => {
             sandbox.restore();
           });
           it('should return expected fields if successful', (done) => {
-            const stubAccountSignupRepo = sandbox.stub(accountSignupRepo, 'findOne');
-            stubAccountSignupRepo
-              .callsArgWith(1, null, {
-                attributes: {
-                  id: accountId,
-                  name: accountName,
-                  status: 'created',
-                },
-              });
+            const rd = sandbox.stub(read, 'default');
+            rd.returns(Promise.resolve(accountId));
+            const status = 'created';
             stubHandle.callsArgWith(
               1,
               null,
@@ -60,7 +58,7 @@ describe('unit', () => {
               {
                 id: accountId,
                 name: accountName,
-                status: 'created',
+                status,
               });
             verifyAccountSignup({
               input: {
@@ -71,38 +69,56 @@ describe('unit', () => {
               expect(ret).deep.equal({
                 id: accountId,
                 name: accountName,
-                status: 'created',
+                status,
               });
               done();
             }).catch((err) => {
               done(err);
             });
           });
-          it('should error with message if account does not exist', (done) => {
-            const stubAccountSignupRepo = sandbox.stub(accountSignupRepo, 'findOne');
-            stubAccountSignupRepo
-              .callsArgWith(1, null, null);
-            stubHandle.callsArgWith(
-              1,
-              {
-                name: 'A fake error',
-                message: 'fake error details',
-                more: '',
-              },
-              null,
-              null);
+          it('should error with message if error when reading account', (done) => {
+            const rd = sandbox.stub(read, 'default');
+            const expectedError = {
+              name: 'A fake error',
+              message: 'fake error details',
+              more: '',
+            };
+            rd.returns(Promise.reject(expectedError));
             verifyAccountSignup({
               input: {
-                name: 'myAccount',
+                key: 'myAccount',
+                verificationCode: '12345',
               },
-            }).catch((ret) => {
-              expect(ret).deep.equal({
-                code: 400,
-                message: 'No key supplied',
-              });
+            }).catch((err) => {
+              expect(err).deep.equal(expectedError);
               done();
             });
           });
+          it('should reject the promise if submitAccountEmailVerificationCode errors', mochaAsync(async () => {
+            const rd = sandbox.stub(read, 'default');
+            rd.returns(Promise.resolve(accountId));
+            const expectedError = {
+              name: 'A fake error',
+              message: 'fake error details',
+              more: '',
+            };
+            stubHandle.callsArgWith(
+              1,
+              expectedError,
+              null,
+              null,
+            );
+            try {
+              await verifyAccountSignup({
+                input: {
+                  key: 'myAccount',
+                  verificationCode: '12345',
+                },
+              });
+            } catch (err) {
+              expect(err).to.equal(expectedError);
+            }
+          }));
         });
       });
     });

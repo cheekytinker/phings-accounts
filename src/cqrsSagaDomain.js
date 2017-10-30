@@ -32,6 +32,7 @@ const createSagaDomain = () => {
   });
   /* Istanbul ignore next */
   singleSagaDomain.sagaStore.on('disconnect', () => {
+    /* Istanbul ignore next */
     log.info('sagastore disconnected');
   });
   singleSagaDomain.revisionGuardStore.on('connect', () => {
@@ -39,6 +40,7 @@ const createSagaDomain = () => {
   });
   /* Istanbul ignore next */
   singleSagaDomain.revisionGuardStore.on('disconnect', () => {
+    /* Istanbul ignore next */
     log.info('revisionGuardStore disconnected');
   });
   singleSagaDomain.on('connect', () => {
@@ -46,6 +48,7 @@ const createSagaDomain = () => {
   });
   /* Istanbul ignore next */
   singleSagaDomain.on('disconnect', () => {
+    /* Istanbul ignore next */
     log.info('saga something disconnected');
   });
   return singleSagaDomain;
